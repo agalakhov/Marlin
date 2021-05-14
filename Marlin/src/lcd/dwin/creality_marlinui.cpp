@@ -95,7 +95,7 @@ void MarlinUI::init() {
   DWIN_UpdateLCD();     // Show bootscreen (first image)
   Encoder_Configuration();
   for (uint16_t t = 0; t <= 100; t += 2) {
-    DWIN_ICON_Show(ICON, ICON_Bar, 15, 260);
+    DWIN_ICON_Show(DWIN::ICON, DWIN::Icon::Bar, 15, 260);
     DWIN_Draw_Rectangle(1, Color_Bg_Black, 15 + t * 242 / 100, 260, 257, 280);
     DWIN_UpdateLCD();
     delay(20);
@@ -105,7 +105,7 @@ void MarlinUI::init() {
 }
 
 void MarlinUI::kill_screen(PGM_P const error, PGM_P const component) {
-  CrealityDWIN.Draw_Popup((char*)"Printer Kill Reason:", error, (char*)"Restart Required", Wait, ICON_BLTouch);
+  CrealityDWIN.Draw_Popup((char*)"Printer Kill Reason:", error, (char*)"Restart Required", Wait, DWIN::Icon::BLTouch);
 }
 
 #endif

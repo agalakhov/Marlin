@@ -29,6 +29,7 @@
  * @brief    迪文屏控制操作函数
  ********************************************************************************/
 
+#include "dwin_defs.h"
 #include <stdint.h>
 
 #define RECEIVED_NO_DATA         0x00
@@ -138,12 +139,12 @@ void DWIN_Frame_AreaMove(uint8_t mode, uint8_t dir, uint16_t dis,
 //  bColor: Background color
 //  x/y: Upper-left coordinate of the string
 //  *string: The string
-void DWIN_Draw_String(bool widthAdjust, bool bShow, uint8_t size,
+void DWIN_Draw_String(bool widthAdjust, bool bShow, DWIN::Font size,
                       uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, const char * string);
 
 class __FlashStringHelper;
 
-inline void DWIN_Draw_String(bool widthAdjust, bool bShow, uint8_t size, uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, const __FlashStringHelper *title) {
+inline void DWIN_Draw_String(bool widthAdjust, bool bShow, DWIN::Font size, uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, const __FlashStringHelper *title) {
   // Note that this won't work on AVR. This is for 32-bit systems only!
   // Are __FlashStringHelper versions worth keeping?
   DWIN_Draw_String(widthAdjust, bShow, size, color, bColor, x, y, reinterpret_cast<const char*>(title));
@@ -159,7 +160,7 @@ inline void DWIN_Draw_String(bool widthAdjust, bool bShow, uint8_t size, uint16_
 //  iNum: Number of digits
 //  x/y: Upper-left coordinate
 //  value: Integer value
-void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t size, uint16_t color,
+void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, DWIN::Font size, uint16_t color,
                           uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, uint16_t value);
 
 // Draw a floating point number
@@ -173,7 +174,7 @@ void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t 
 //  fNum: Number of decimal digits
 //  x/y: Upper-left point
 //  value: Float value
-void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t size, uint16_t color,
+void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, DWIN::Font size, uint16_t color,
                             uint16_t bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, long value);
 
 /*---------------------------------------- Picture related functions ----------------------------------------*/
@@ -186,7 +187,7 @@ void DWIN_JPG_ShowAndCache(const uint8_t id);
 //  libID: Icon library ID
 //  picID: Icon ID
 //  x/y: Upper-left point
-void DWIN_ICON_Show(uint8_t libID, uint8_t picID, uint16_t x, uint16_t y);
+void DWIN_ICON_Show(uint8_t libID, DWIN::Icon picID, uint16_t x, uint16_t y);
 
 // Unzip the JPG picture to a virtual display area
 //  n: Cache index
@@ -213,8 +214,8 @@ void DWIN_Frame_AreaCopy(uint8_t cacheID, uint16_t xStart, uint16_t yStart,
 //  picIDe: Icon ending ID
 //  x/y: Upper-left point
 //  interval: Display time interval, unit 10mS
-void DWIN_ICON_Animation(uint8_t animID, bool animate, uint8_t libID, uint8_t picIDs,
-                         uint8_t picIDe, uint16_t x, uint16_t y, uint16_t interval);
+void DWIN_ICON_Animation(uint8_t animID, bool animate, uint8_t libID, DWIN::Icon picIDs,
+                         DWIN::Icon picIDe, uint16_t x, uint16_t y, uint16_t interval);
 
 // Animation Control
 //  state: 16 bits, each bit is the state of an animation id
