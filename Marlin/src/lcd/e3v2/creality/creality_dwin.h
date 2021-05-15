@@ -30,6 +30,7 @@
 #include "rotary_encoder.h"
 #include "../../../libs/BL24CXX.h"
 #include "../../../inc/MarlinConfigPre.h"
+#include "geometry.h"
 
 enum processID : uint8_t {
   Main, Print, Menu, Value, Option, File, Popup, Confirm, Keyboard, Wait
@@ -132,6 +133,9 @@ enum colorID : uint8_t {
 #define Cancel_Color        0x3186
 
 class CrealityDWINClass {
+
+private:
+  Creality::PortraitGeometry geometry;
 
 public:
   static constexpr size_t eeprom_data_size = 48;
