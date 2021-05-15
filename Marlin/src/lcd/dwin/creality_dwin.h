@@ -30,6 +30,7 @@
 #include "rotary_encoder.h"
 #include "../../libs/BL24CXX.h"
 #include "../../inc/MarlinConfigPre.h"
+#include "geometry.h"
 
 enum processID : uint8_t {
   Main, Print, Menu, Value, Option, File, Popup, Confirm, Wait
@@ -127,6 +128,9 @@ enum colorID : uint8_t {
 #define Check_Color         0x4E5C  // Check-box check color
 
 class CrealityDWINClass {
+
+private:
+  Creality::PortraitGeometry geometry;
 
 public:
   static constexpr size_t eeprom_data_size = 48;
