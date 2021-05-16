@@ -634,7 +634,7 @@ void CrealityDWINClass::Draw_Main_Menu(uint8_t select/*=0*/) {
   Clear_Screen();
   Draw_Title(Get_Menu_Title(MainMenu));
   SERIAL_ECHOPGM("\nDWIN handshake ");
-  DWIN_ICON_Show(ICON, Icon::LOGO, 71, 72);
+  DWIN_ICON_Show(ICON, Icon::LOGO, geometry.logoPos.x, geometry.logoPos.y);
   Main_Menu_Icons();
 }
 
@@ -737,10 +737,15 @@ void CrealityDWINClass::Draw_Print_Filename(bool reset/*=false*/) {
 
 void CrealityDWINClass::Draw_Print_ProgressBar() {
   uint8_t printpercent = sdprint ? card.percentDone() : (ui._get_progress()/100);
-  DWIN_ICON_Show(ICON, Icon::Bar, 15, 93);
-  DWIN_Draw_Rectangle(1, BarFill_Color, 16 + printpercent * 240 / 100, 93, 256, 113);
-  DWIN_Draw_IntValue(true, true, 0, geometry.menuFont, GetColor(eeprom_settings.progress_percent, Percent_Color), Color_Bg_Black, 3, 109, 133, printpercent);
-  DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.progress_percent, Percent_Color), Color_Bg_Black, 133, 133, "%");
+  constexpr auto rect = geometry.printProgressBarPos;
+  DWIN_ICON_Show(ICON, Icon::Bar, rect.tl.x, rect.tl.y);
+  const uint16_t x = rect.tl.x + 1 + printpercent * (rect.br.x - rect.tl.x - 1) / 100;
+  DWIN_Draw_Rectangle(1, BarFill_Color, x, rect.tl.y, rect.br.x, rect.br.y);
+  constexpr auto pt = geometry.printPercentPos;
+  constexpr uint8_t chars = 3;
+  DWIN_Draw_IntValue(true, true, 0, geometry.menuFont, GetColor(eeprom_settings.progress_percent, Percent_Color), Color_Bg_Black, chars, pt.x, pt.y, printpercent);
+  const uint16_t px = pt.x + chars * geometry.Font_CharSize(geometry.menuFont).w;
+  DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.progress_percent, Percent_Color), Color_Bg_Black, px, pt.y, "%");
 }
 
 void CrealityDWINClass::Draw_Print_ProgressRemain() {
