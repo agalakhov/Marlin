@@ -92,6 +92,9 @@ namespace Creality {
     static constexpr Dimensions screen = { screenShortSide, screenLongSide };
     static constexpr uint16_t titleHeight = 30;
     static constexpr Grid mainMenuGrid = { { 17, 130 }, { 128, 116 }, { 2, 2 } };
+    static constexpr Point logoPos = { 71, 72 };
+    static constexpr Rectangle printProgressBarPos = { { 15, 93 }, { 256, 113 } };
+    static constexpr Point printPercentPos = { 109, 133 };
   };
 
   // These functions must be defined in header file since they all are constexpr.
