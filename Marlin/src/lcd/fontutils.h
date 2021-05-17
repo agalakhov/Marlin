@@ -24,9 +24,12 @@ uint8_t read_byte_rom(uint8_t * str);
 // there's overflow of the wchar_t due to the 2-byte size in Arduino
 // sizeof(wchar_t)=2; sizeof(size_t)=2; sizeof(uint32_t)=4;
 // sizeof(int)=2; sizeof(long)=4; sizeof(unsigned)=2;
-//#undef wchar_t
-#define wchar_t uint32_t
-//typedef uint32_t wchar_t;
+// only enable this hack on AVR since it damages C++ standard library
+#ifdef __AVR__
+  //#undef wchar_t
+  #define wchar_t uint32_t
+  //typedef uint32_t wchar_t;
+#endif
 
 typedef uint16_t pixel_len_t;
 #define PIXEL_LEN_NOLIMIT ((pixel_len_t)(-1))
