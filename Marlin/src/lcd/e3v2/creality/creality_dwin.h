@@ -247,6 +247,8 @@ public:
   void Load_Settings(const char *buff);
   void Reset_Settings();
 
+private:
+  void Draw_Time(Creality::Point position, uint16_t seconds);
 };
 
 extern CrealityDWINClass CrealityDWIN;
