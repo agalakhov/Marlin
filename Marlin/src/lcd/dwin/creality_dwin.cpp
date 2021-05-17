@@ -583,9 +583,10 @@ void CrealityDWINClass::Draw_Main_Menu(uint8_t select/*=0*/) {
 
 void CrealityDWINClass::Print_Screen_Icons() {
   const auto font = geometry.menuFont;
+  const auto highlightColor = GetColor(eeprom_settings.highlight_box, Color_White);
   if (selection == 0) {
     DWIN_ICON_Show(ICON, Icon::Setup_1, 8, 252);
-    DWIN_Draw_Rectangle(0, GetColor(eeprom_settings.highlight_box, Color_White), 8, 252, 87, 351);
+    DWIN_Draw_Rectangle(0, highlightColor, 8, 252, 87, 351);
     DWIN_Draw_String(false, false, font, Color_White, Color_Bg_Blue, 30, 322, F("Tune"));
   }
   else {
@@ -691,30 +692,32 @@ void CrealityDWINClass::Draw_Print_ProgressBar() {
   DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.progress_percent, Percent_Color), Color_Bg_Black, px, pt.y, "%");
 }
 
-void CrealityDWINClass::Draw_Print_ProgressRemain() {
-  uint16_t remainingtime = ui.get_remaining_time();
-  DWIN_Draw_IntValue(true, true, 1, geometry.menuFont, GetColor(eeprom_settings.progress_time, Color_White), Color_Bg_Black, 2, 176, 187, remainingtime / 3600);
-  DWIN_Draw_IntValue(true, true, 1, geometry.menuFont, GetColor(eeprom_settings.progress_time, Color_White), Color_Bg_Black, 2, 200, 187, (remainingtime % 3600) / 60);
+void CrealityDWINClass::Draw_Time(Point position, uint16_t seconds) {
+  constexpr auto font = geometry.menuFont;
+  const auto fgColor = GetColor(eeprom_settings.progress_time, Color_White);
+  const auto bgColor = Color_Bg_Black;
+  const uint8_t hours = seconds / 3600;
+  const uint8_t minutes = (seconds % 3600) / 60;
+  const uint16_t cw = geometry.Font_CharSize(font).w;
+  DWIN_Draw_IntValue(true, true, 1, font, fgColor, bgColor, 2, position.x, position.y, hours);
+  DWIN_Draw_IntValue(true, true, 1, font, fgColor, bgColor, 2, position.x + 3 * cw, position.y, minutes);
   if (eeprom_settings.time_format_textual) {
-    DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.progress_time, Color_White), Color_Bg_Black, 192, 187, "h");
-    DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.progress_time, Color_White), Color_Bg_Black, 216, 187, "m");
+    DWIN_Draw_String(false, false, font, fgColor, bgColor, position.x + 2 * cw, position.y, "h");
+    DWIN_Draw_String(false, false, font, fgColor, bgColor, position.x + 5 * cw, position.y, "m");
   }
   else {
-    DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.progress_time, Color_White), Color_Bg_Black, 192, 187, ":");
+    DWIN_Draw_String(false, false, font, fgColor, Color_Bg_Black, position.x + 2 * cw, position.y, ":");
   }
 }
 
+void CrealityDWINClass::Draw_Print_ProgressRemain() {
+  constexpr auto pos = geometry.printRemainingTimePos;
+  Draw_Time(pos, ui.get_remaining_time());
+}
+
 void CrealityDWINClass::Draw_Print_ProgressElapsed() {
-  duration_t elapsed = print_job_timer.duration();
-  DWIN_Draw_IntValue(true, true, 1, geometry.menuFont, GetColor(eeprom_settings.progress_time, Color_White), Color_Bg_Black, 2, 42, 187, elapsed.value / 3600);
-  DWIN_Draw_IntValue(true, true, 1, geometry.menuFont, GetColor(eeprom_settings.progress_time, Color_White), Color_Bg_Black, 2, 66, 187, (elapsed.value % 3600) / 60);
-  if (eeprom_settings.time_format_textual) {
-    DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.progress_time, Color_White), Color_Bg_Black, 58, 187, "h");
-    DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.progress_time, Color_White), Color_Bg_Black, 82, 187, "m");
-  }
-  else {
-    DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.progress_time, Color_White), Color_Bg_Black, 58, 187, ":");
-  }
+  constexpr auto pos = geometry.printRemainingTimePos;
+  Draw_Time(pos, ui.get_remaining_time());
 }
 
 void CrealityDWINClass::Draw_Print_confirm() {

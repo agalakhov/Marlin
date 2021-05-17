@@ -79,6 +79,7 @@ namespace Creality {
     static constexpr DWIN::Font menuFont = DWIN::Font::font8x16;
 
     static constexpr Dimensions mainMenuItemSize = { 109, 99 };
+    static constexpr Dimensions printMenuItemSize = { 79, 99 };
     static constexpr uint16_t mainMenuTextHeight = 40;
 
   public:
@@ -92,9 +93,12 @@ namespace Creality {
     static constexpr Dimensions screen = { screenShortSide, screenLongSide };
     static constexpr uint16_t titleHeight = 30;
     static constexpr Grid mainMenuGrid = { { 17, 130 }, { 128, 116 }, { 2, 2 } };
+    static constexpr Grid printMenuGrid = { { 8, 252 }, { 176 , 0 }, { 3, 1 } };
     static constexpr Point logoPos = { 71, 72 };
     static constexpr Rectangle printProgressBarPos = { { 15, 93 }, { 256, 113 } };
     static constexpr Point printPercentPos = { 109, 133 };
+    static constexpr Point printElapsedTimePos = { 42, 187 };
+    static constexpr Point printRemainingTimePos = { 176, 187 };
   };
 
   // These functions must be defined in header file since they all are constexpr.
