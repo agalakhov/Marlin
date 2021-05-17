@@ -30,6 +30,7 @@
 #if ENABLED(DWIN_CREALITY_LCD)
 
 #include "creality_dwin.h"
+#include "geometry.h"
 
 #include "../marlinui.h"
 #include "../../MarlinCore.h"
@@ -92,7 +93,7 @@
 #define BUILD_NUMBER "1.3.4"
 
 using namespace DWIN;
-using namespace Creality;
+using Creality::Geometry, Creality::Rectangle, Creality::Point;
 
 #define MENU_CHAR_LIMIT  24
 #define STATUS_Y 352
@@ -305,7 +306,7 @@ CrealityDWINClass CrealityDWIN;
 
     void Draw_Bed_Mesh(int16_t selected = -1, uint8_t gridline_width = 1, uint16_t padding_x = 8, uint16_t padding_y_top = 40 + 53 - 7) {
       drawing_mesh = true;
-      const uint16_t total_width_px = geometry.screen.w - padding_x - padding_x;
+      const uint16_t total_width_px = Geometry::screen.w - padding_x - padding_x;
       const uint16_t cell_width_px  = total_width_px / GRID_MAX_POINTS_X;
       const uint16_t cell_height_px = total_width_px / GRID_MAX_POINTS_Y;
       const float v_max = abs(get_max_value()), v_min = abs(get_min_value()), range = max(v_min, v_max);
@@ -390,13 +391,13 @@ CrealityDWINClass CrealityDWIN;
 //  2=Menu area
 //  1=Title bar
 void CrealityDWINClass::Clear_Screen(uint8_t e/*=3*/) {
-  if (e==1||e==3||e==4) DWIN_Draw_Rectangle(1, GetColor(eeprom_settings.menu_top_bg, Color_Bg_Blue, false), 0, 0, geometry.screen.w, geometry.titleHeight); // Clear Title Bar
-  if (e==2||e==3) DWIN_Draw_Rectangle(1, Color_Bg_Black, 0, 31, geometry.screen.w, STATUS_Y); // Clear Menu Area
-  if (e==4) DWIN_Draw_Rectangle(1, Color_Bg_Black, 0, 31, geometry.screen.w, geometry.screen.h); // Clear Popup Area
+  if (e==1||e==3||e==4) DWIN_Draw_Rectangle(1, GetColor(eeprom_settings.menu_top_bg, Color_Bg_Blue, false), 0, 0, Geometry::screen.w, Geometry::titleHeight); // Clear Title Bar
+  if (e==2||e==3) DWIN_Draw_Rectangle(1, Color_Bg_Black, 0, 31, Geometry::screen.w, STATUS_Y); // Clear Menu Area
+  if (e==4) DWIN_Draw_Rectangle(1, Color_Bg_Black, 0, 31, Geometry::screen.w, Geometry::screen.h); // Clear Popup Area
 }
 
 void CrealityDWINClass::Draw_Float(float value, uint8_t row, bool selected/*=false*/, uint8_t minunit/*=10*/) {
-  const auto font = geometry.menuFont;
+  const auto font = Geometry::menuFont;
   uint16_t bColor = (selected) ? Select_Color : Color_Bg_Black;
   if (isnan(value)) {
     DWIN_Draw_String(false, true, font, Color_White, bColor, 196, MBASE(row), F(" NaN"));
@@ -414,7 +415,7 @@ void CrealityDWINClass::Draw_Option(uint8_t value, const char * const * options,
   uint16_t bColor = (selected) ? Select_Color : Color_Bg_Black;
   uint16_t tColor = (color) ? GetColor(value, Color_White, false) : Color_White;
   DWIN_Draw_Rectangle(1, bColor, 202, MBASE(row) + 14, 258, MBASE(row) - 2);
-  DWIN_Draw_String(false, false, geometry.menuFont, tColor, bColor, 202, MBASE(row) - 1, options[value]);
+  DWIN_Draw_String(false, false, Geometry::menuFont, tColor, bColor, 202, MBASE(row) - 1, options[value]);
 }
 
 uint16_t CrealityDWINClass::GetColor(uint8_t color, uint16_t original, bool light/*=false*/) {
@@ -457,16 +458,16 @@ uint16_t CrealityDWINClass::GetColor(uint8_t color, uint16_t original, bool ligh
 }
 
 void CrealityDWINClass::Draw_Title(const char * title) {
-  const auto p = geometry.Text_Inscribe({ geometry.screen.w, geometry.titleHeight }, geometry.titleFont, title);
-  DWIN_Draw_String(false, false, geometry.titleFont, GetColor(eeprom_settings.menu_top_txt, Color_White, false), Color_Bg_Blue, p.x, p.y, title);
+  const auto p = Geometry::Text_Inscribe({ Geometry::screen.w, Geometry::titleHeight }, Geometry::titleFont, title);
+  DWIN_Draw_String(false, false, Geometry::titleFont, GetColor(eeprom_settings.menu_top_txt, Color_White, false), Color_Bg_Blue, p.x, p.y, title);
 }
 
 void CrealityDWINClass::Draw_Menu_Item(uint8_t row, Icon icon/*=0*/, const char * label1, const char * label2, bool more/*=false*/, bool centered/*=false*/) {
   const uint8_t label_offset_y = !(label1 && label2) ? 0 : MENU_CHR_H * 3 / 5;
-  const uint8_t label1_offset_x = !centered ? LBLX : LBLX * 4/5 + max(LBLX * 1U/5, (geometry.screen.w - LBLX - (label1 ? strlen(label1) : 0) * MENU_CHR_W) / 2);
-  const uint8_t label2_offset_x = !centered ? LBLX : LBLX * 4/5 + max(LBLX * 1U/5, (geometry.screen.w - LBLX - (label2 ? strlen(label2) : 0) * MENU_CHR_W) / 2);
-  if (label1) DWIN_Draw_String(false, false, geometry.menuFont, Color_White, Color_Bg_Black, label1_offset_x, MBASE(row) - 1 - label_offset_y, label1); // Draw Label
-  if (label2) DWIN_Draw_String(false, false, geometry.menuFont, Color_White, Color_Bg_Black, label2_offset_x, MBASE(row) - 1 + label_offset_y, label2); // Draw Label
+  const uint8_t label1_offset_x = !centered ? LBLX : LBLX * 4/5 + max(LBLX * 1U/5, (Geometry::screen.w - LBLX - (label1 ? strlen(label1) : 0) * MENU_CHR_W) / 2);
+  const uint8_t label2_offset_x = !centered ? LBLX : LBLX * 4/5 + max(LBLX * 1U/5, (Geometry::screen.w - LBLX - (label2 ? strlen(label2) : 0) * MENU_CHR_W) / 2);
+  if (label1) DWIN_Draw_String(false, false, Geometry::menuFont, Color_White, Color_Bg_Black, label1_offset_x, MBASE(row) - 1 - label_offset_y, label1); // Draw Label
+  if (label2) DWIN_Draw_String(false, false, Geometry::menuFont, Color_White, Color_Bg_Black, label2_offset_x, MBASE(row) - 1 + label_offset_y, label2); // Draw Label
   if (icon != NoIcon) DWIN_ICON_Show(ICON, icon, 26, MBASE(row) - 3);   //Draw Menu Icon
   if (more) DWIN_ICON_Show(ICON, Icon::More, 226, MBASE(row) - 3); // Draw More Arrow
   DWIN_Draw_Line(GetColor(eeprom_settings.menu_split_line, Line_Color, true), 16, MBASE(row) + 33, 256, MBASE(row) + 33); // Draw Menu Line
@@ -533,41 +534,28 @@ void CrealityDWINClass::Redraw_Screen() {
 
 /* Primary Menus and Screen Elements */
 
-void CrealityDWINClass::Main_Menu_Icons() {
-  constexpr auto font = geometry.menuFont;
-  constexpr auto grid = geometry.mainMenuGrid;
-
-  const struct {
-    const Icon normalIcon;
-    const Icon selectedIcon;
-    const char * const text;
-  } items[] = {
+const Creality::Menu mainMenu = {
+  "Main Menu",
+  Creality::MenuTypeIcons {
+      Geometry::mainMenuItemSize,
+      Geometry::mainMenuGrid,
+      2
+  },
+  {
     { Icon::Print_0, Icon::Print_1, "Print" },
     { Icon::Prepare_0, Icon::Prepare_1, "Prepare" },
     { Icon::Control_0, Icon::Control_1, "Control" },
-    #if ANY(HAS_ONESTEP_LEVELING, AUTO_BED_LEVELING_UBL, PROBE_MANUALLY) 
+    #if ANY(HAS_ONESTEP_LEVELING, AUTO_BED_LEVELING_UBL, PROBE_MANUALLY)
       { Icon::Leveling_0, Icon::Leveling_1, "Level" },
     #else
       { Icon::Info_0, Icon::Info_1, "Info" },
     #endif
-  };
-
-  for (uint8_t row = 0; row < grid.counts.h; ++row) {
-    for (uint8_t col = 0; col < grid.counts.w; ++col) {
-      const uint16_t idx = row * grid.counts.w + col;
-      const bool sel = (selection == idx);
-      const auto pos = grid.At(col, row);
-      const auto& item = items[idx];
-      const auto rect = geometry.mainMenuItemSize.AtPoint(pos);
-      DWIN_ICON_Show(ICON, sel ? item.selectedIcon : item.normalIcon, pos.x, pos.y);
-      if (sel) {
-        DWIN_Draw_Rectangle(0, GetColor(eeprom_settings.highlight_box, Color_White), rect.tl.x, rect.tl.y, rect.br.x, rect.br.y);
-      }
-      Rectangle textRect = { { rect.tl.x, static_cast<uint16_t>(rect.br.y - geometry.mainMenuTextHeight) }, rect.br };
-      auto textPos = geometry.Text_Inscribe(textRect, font, item.text);
-      DWIN_Draw_String(false, false, font, Color_White, Color_Bg_Blue, textPos.x, textPos.y, item.text);
-    }
+    Creality::EndMenu
   }
+};
+
+void CrealityDWINClass::Main_Menu_Icons() {
+  this->menuEngine.Draw_IconicMenu(std::get<Creality::MenuTypeIcons>(mainMenu.type), mainMenu.items, selection);
 }
 
 void CrealityDWINClass::Draw_Main_Menu(uint8_t select/*=0*/) {
@@ -576,67 +564,62 @@ void CrealityDWINClass::Draw_Main_Menu(uint8_t select/*=0*/) {
   selection = select;
   Clear_Screen();
   Draw_Title(Get_Menu_Title(MainMenu));
-  SERIAL_ECHOPGM("\nDWIN handshake ");
-  DWIN_ICON_Show(ICON, Icon::LOGO, geometry.logoPos.x, geometry.logoPos.y);
+  DWIN_ICON_Show(ICON, Icon::LOGO, Geometry::logoPos.x, Geometry::logoPos.y);
   Main_Menu_Icons();
 }
 
+// FIXME support disabled menu items
+
+const Creality::Menu printMenu = {
+  nullptr,
+  Creality::MenuTypeIcons {
+      Geometry::printMenuItemSize,
+      Geometry::printMenuGrid,
+      3
+  },
+  {
+    { Icon::Setup_0, Icon::Setup_1, "Tune" },
+    { Icon::Pause_0, Icon::Pause_1, "Pause" },
+    // { Icon::Continue_0, Icon::Continue_1, "Print" },
+    { Icon::Stop_0, Icon::Stop_1, "Stop" },
+    Creality::EndMenu
+  }
+};
+
+// FIXME temporary kludge
+const Creality::Menu printMenuKludge = {
+  nullptr,
+  Creality::MenuTypeIcons {
+      Geometry::printMenuItemSize,
+      Geometry::printMenuGrid,
+      3
+  },
+  {
+    { Icon::Setup_0, Icon::Setup_1, "Tune" },
+    { Icon::Continue_0, Icon::Continue_1, "Print" },
+    { Icon::Stop_0, Icon::Stop_1, "Stop" },
+    Creality::EndMenu
+  }
+};
+
+
+
 void CrealityDWINClass::Print_Screen_Icons() {
-  const auto font = geometry.menuFont;
-  const auto highlightColor = GetColor(eeprom_settings.highlight_box, Color_White);
-  if (selection == 0) {
-    DWIN_ICON_Show(ICON, Icon::Setup_1, 8, 252);
-    DWIN_Draw_Rectangle(0, highlightColor, 8, 252, 87, 351);
-    DWIN_Draw_String(false, false, font, Color_White, Color_Bg_Blue, 30, 322, F("Tune"));
-  }
-  else {
-    DWIN_ICON_Show(ICON, Icon::Setup_0, 8, 252);
-    DWIN_Draw_String(false, false, font, Color_White, Color_Bg_Blue, 30, 322, F("Tune"));
-  }
-  if (selection == 2) {
-    DWIN_ICON_Show(ICON, Icon::Stop_1, 184, 252);
-    DWIN_Draw_Rectangle(0, GetColor(eeprom_settings.highlight_box, Color_White), 184, 252, 263, 351);
-    DWIN_Draw_String(false, false, font, Color_White, Color_Bg_Blue, 205, 322, F("Stop"));
-  }
-  else {
-    DWIN_ICON_Show(ICON, Icon::Stop_0, 184, 252);
-    DWIN_Draw_String(false, false, font, Color_White, Color_Bg_Blue, 205, 322, F("Stop"));
-  }
-  if (paused) {
-    if (selection == 1) {
-      DWIN_ICON_Show(ICON, Icon::Continue_1, 96, 252);
-      DWIN_Draw_Rectangle(0, GetColor(eeprom_settings.highlight_box, Color_White), 96, 252, 175, 351);
-      DWIN_Draw_String(false, false, font, Color_White, Color_Bg_Blue, 114, 322, F("Print"));
-    }
-    else {
-      DWIN_ICON_Show(ICON, Icon::Continue_0, 96, 252);
-      DWIN_Draw_String(false, false, font, Color_White, Color_Bg_Blue, 114, 322, F("Print"));
-    }
-  }
-  else {
-    if (selection == 1) {
-      DWIN_ICON_Show(ICON, Icon::Pause_1, 96, 252);
-      DWIN_Draw_Rectangle(0, GetColor(eeprom_settings.highlight_box, Color_White), 96, 252, 175, 351);
-      DWIN_Draw_String(false, false, font, Color_White, Color_Bg_Blue, 114, 322, F("Pause"));
-    }
-    else {
-      DWIN_ICON_Show(ICON, Icon::Pause_0, 96, 252);
-      DWIN_Draw_String(false, false, font, Color_White, Color_Bg_Blue, 114, 322, F("Pause"));
-    }
-  }
+  const auto& menu = paused ? printMenuKludge : printMenu;
+  this->menuEngine.Draw_IconicMenu(std::get<Creality::MenuTypeIcons>(menu.type), menu.items, selection);
 }
 
 void CrealityDWINClass::Draw_Print_Screen() {
   process = Print;
   selection = 0;
   Clear_Screen();
-  DWIN_Draw_Rectangle(1, Color_Bg_Black, 8, 352, geometry.screen.w-8, 376);
+  DWIN_Draw_Rectangle(1, Color_Bg_Black, 8, 352, Geometry::screen.w-8, 376);
   Draw_Title("Printing...");
   Print_Screen_Icons();
   DWIN_ICON_Show(ICON, Icon::PrintTime, 14, 171);
   DWIN_ICON_Show(ICON, Icon::RemainTime, 147, 169);
-  DWIN_Draw_String(false, false, geometry.menuFont, Color_White, Color_Bg_Black, 41, 163, "Elapsed");
-  DWIN_Draw_String(false, false, geometry.menuFont,  Color_White, Color_Bg_Black, 176, 163, "Remaining");
+  DWIN_Draw_String(false, false, Geometry::menuFont, Color_White, Color_Bg_Black, 41, 163, "Elapsed");
+  DWIN_Draw_String(false, false, Geometry::menuFont,  Color_White, Color_Bg_Black, 176, 163, "Remaining");
   Update_Status_Bar(true);
   Draw_Print_ProgressBar();
   Draw_Print_ProgressElapsed();
@@ -664,41 +647,41 @@ void CrealityDWINClass::Draw_Print_Filename(bool reset/*=false*/) {
         LOOP_S_L_N(i, 30+pos, 30) dispname[i] = filename[i-(30+pos)];
       }
       dispname[len] = '\0';
-      DWIN_Draw_Rectangle(1, Color_Bg_Black, 8, 50, geometry.screen.w-8, 80);
-      const int8_t npos = (geometry.screen.w - 30 * MENU_CHR_W) / 2;
-      DWIN_Draw_String(false, false, geometry.menuFont, Color_White, Color_Bg_Black, npos, 60, dispname);
+      DWIN_Draw_Rectangle(1, Color_Bg_Black, 8, 50, Geometry::screen.w-8, 80);
+      const int8_t npos = (Geometry::screen.w - 30 * MENU_CHR_W) / 2;
+      DWIN_Draw_String(false, false, Geometry::menuFont, Color_White, Color_Bg_Black, npos, 60, dispname);
       if (-pos >= 30)
         namescrl = 0;
       namescrl++;
     }
     else {
-      DWIN_Draw_Rectangle(1, Color_Bg_Black, 8, 50, geometry.screen.w-8, 80);
-      const int8_t npos = (geometry.screen.w - strlen(filename) * MENU_CHR_W) / 2;
-      DWIN_Draw_String(false, false, geometry.menuFont, Color_White, Color_Bg_Black, npos, 60, filename);
+      DWIN_Draw_Rectangle(1, Color_Bg_Black, 8, 50, Geometry::screen.w-8, 80);
+      const int8_t npos = (Geometry::screen.w - strlen(filename) * MENU_CHR_W) / 2;
+      DWIN_Draw_String(false, false, Geometry::menuFont, Color_White, Color_Bg_Black, npos, 60, filename);
     }
   }
 }
 
 void CrealityDWINClass::Draw_Print_ProgressBar() {
   uint8_t printpercent = sdprint ? card.percentDone() : (ui._get_progress()/100);
-  constexpr auto rect = geometry.printProgressBarPos;
+  constexpr auto rect = Geometry::printProgressBarPos;
   DWIN_ICON_Show(ICON, Icon::Bar, rect.tl.x, rect.tl.y);
   const uint16_t x = rect.tl.x + 1 + printpercent * (rect.br.x - rect.tl.x - 1) / 100;
   DWIN_Draw_Rectangle(1, BarFill_Color, x, rect.tl.y, rect.br.x, rect.br.y);
-  constexpr auto pt = geometry.printPercentPos;
+  constexpr auto pt = Geometry::printPercentPos;
   constexpr uint8_t chars = 3;
-  DWIN_Draw_IntValue(true, true, 0, geometry.menuFont, GetColor(eeprom_settings.progress_percent, Percent_Color), Color_Bg_Black, chars, pt.x, pt.y, printpercent);
-  const uint16_t px = pt.x + chars * geometry.Font_CharSize(geometry.menuFont).w;
-  DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.progress_percent, Percent_Color), Color_Bg_Black, px, pt.y, "%");
+  DWIN_Draw_IntValue(true, true, 0, Geometry::menuFont, GetColor(eeprom_settings.progress_percent, Percent_Color), Color_Bg_Black, chars, pt.x, pt.y, printpercent);
+  const uint16_t px = pt.x + chars * Geometry::Font_CharSize(Geometry::menuFont).w;
+  DWIN_Draw_String(false, false, Geometry::menuFont, GetColor(eeprom_settings.progress_percent, Percent_Color), Color_Bg_Black, px, pt.y, "%");
 }
 
 void CrealityDWINClass::Draw_Time(Point position, uint16_t seconds) {
-  constexpr auto font = geometry.menuFont;
+  constexpr auto font = Geometry::menuFont;
   const auto fgColor = GetColor(eeprom_settings.progress_time, Color_White);
   const auto bgColor = Color_Bg_Black;
   const uint8_t hours = seconds / 3600;
   const uint8_t minutes = (seconds % 3600) / 60;
-  const uint16_t cw = geometry.Font_CharSize(font).w;
+  const uint16_t cw = Geometry::Font_CharSize(font).w;
   DWIN_Draw_IntValue(true, true, 1, font, fgColor, bgColor, 2, position.x, position.y, hours);
   DWIN_Draw_IntValue(true, true, 1, font, fgColor, bgColor, 2, position.x + 3 * cw, position.y, minutes);
   if (eeprom_settings.time_format_textual) {
@@ -711,12 +694,12 @@ void CrealityDWINClass::Draw_Time(Point position, uint16_t seconds) {
 }
 
 void CrealityDWINClass::Draw_Print_ProgressRemain() {
-  constexpr auto pos = geometry.printRemainingTimePos;
+  constexpr auto pos = Geometry::printRemainingTimePos;
   Draw_Time(pos, ui.get_remaining_time());
 }
 
 void CrealityDWINClass::Draw_Print_ProgressElapsed() {
-  constexpr auto pos = geometry.printRemainingTimePos;
+  constexpr auto pos = Geometry::printRemainingTimePos;
   Draw_Time(pos, ui.get_remaining_time());
 }
 
@@ -767,15 +750,15 @@ void CrealityDWINClass::Draw_SD_List(bool removed/*=false*/) {
   }
   else {
     Draw_Menu_Item(0, Icon::Back, "Back");
-    DWIN_Draw_Rectangle(1, Color_Bg_Red, 10, MBASE(3) - 10, geometry.screen.w - 10, MBASE(4));
-    DWIN_Draw_String(false, false, Font::font16x32, Color_Yellow, Color_Bg_Red, ((geometry.screen.w) - 8 * 16) / 2, MBASE(3), "No Media");
+    DWIN_Draw_Rectangle(1, Color_Bg_Red, 10, MBASE(3) - 10, Geometry::screen.w - 10, MBASE(4));
+    DWIN_Draw_String(false, false, Font::font16x32, Color_Yellow, Color_Bg_Red, ((Geometry::screen.w) - 8 * 16) / 2, MBASE(3), "No Media");
   }
   DWIN_Draw_Rectangle(1, GetColor(eeprom_settings.cursor_color, Rectangle_Color), 0, MBASE(0) - 18, 14, MBASE(0) + 33);
 }
 
 void CrealityDWINClass::Draw_Status_Area(bool icons/*=false*/) {
 
-  if(icons) DWIN_Draw_Rectangle(1, Color_Bg_Black, 0, STATUS_Y, geometry.screen.w, geometry.screen.h - 1);
+  if(icons) DWIN_Draw_Rectangle(1, Color_Bg_Black, 0, STATUS_Y, Geometry::screen.w, Geometry::screen.h - 1);
 
   #if HAS_HOTEND
     static float hotend = -1;
@@ -785,26 +768,26 @@ void CrealityDWINClass::Draw_Status_Area(bool icons/*=false*/) {
       hotend = -1;
       hotendtarget = -1;
       DWIN_ICON_Show(ICON, Icon::HotendTemp, 10, 383);
-      DWIN_Draw_String(false, false, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 25 + 3 * STAT_CHR_W + 5, 384, F("/"));
+      DWIN_Draw_String(false, false, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 25 + 3 * STAT_CHR_W + 5, 384, F("/"));
     }
     if (thermalManager.temp_hotend[0].celsius != hotend) {
       hotend = thermalManager.temp_hotend[0].celsius;
-      DWIN_Draw_IntValue(true, true, 0, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 28, 384, thermalManager.temp_hotend[0].celsius);
+      DWIN_Draw_IntValue(true, true, 0, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 28, 384, thermalManager.temp_hotend[0].celsius);
       DWIN_Draw_DegreeSymbol(GetColor(eeprom_settings.status_area_text, Color_White), 25 + 3 * STAT_CHR_W + 5, 386);
     }
     if (thermalManager.temp_hotend[0].target != hotendtarget) {
       hotendtarget = thermalManager.temp_hotend[0].target;
-      DWIN_Draw_IntValue(true, true, 0, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 25 + 4 * STAT_CHR_W + 6, 384, thermalManager.temp_hotend[0].target);
+      DWIN_Draw_IntValue(true, true, 0, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 25 + 4 * STAT_CHR_W + 6, 384, thermalManager.temp_hotend[0].target);
       DWIN_Draw_DegreeSymbol(GetColor(eeprom_settings.status_area_text, Color_White), 25 + 4 * STAT_CHR_W + 39, 386);
     }
     if (icons) {
       flow = -1;
       DWIN_ICON_Show(ICON, Icon::StepE, 112, 417);
-      DWIN_Draw_String(false, false, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 116 + 5 * STAT_CHR_W + 2, 417, F("%"));
+      DWIN_Draw_String(false, false, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 116 + 5 * STAT_CHR_W + 2, 417, F("%"));
     } 
     if (planner.flow_percentage[0] != flow) {
       flow = planner.flow_percentage[0];
-      DWIN_Draw_IntValue(true, true, 0, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 116 + 2 * STAT_CHR_W, 417, planner.flow_percentage[0]);
+      DWIN_Draw_IntValue(true, true, 0, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 116 + 2 * STAT_CHR_W, 417, planner.flow_percentage[0]);
     }
   #endif
 
@@ -815,16 +798,16 @@ void CrealityDWINClass::Draw_Status_Area(bool icons/*=false*/) {
       bed = -1;
       bedtarget = -1;
       DWIN_ICON_Show(ICON, Icon::BedTemp, 10, 416);
-      DWIN_Draw_String(false, false, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 25 + 3 * STAT_CHR_W + 5, 417, F("/"));
+      DWIN_Draw_String(false, false, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 25 + 3 * STAT_CHR_W + 5, 417, F("/"));
     }
     if (thermalManager.temp_bed.celsius != bed) {
       bed = thermalManager.temp_bed.celsius;
-      DWIN_Draw_IntValue(true, true, 0, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 28, 417, thermalManager.temp_bed.celsius);
+      DWIN_Draw_IntValue(true, true, 0, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 28, 417, thermalManager.temp_bed.celsius);
       DWIN_Draw_DegreeSymbol(GetColor(eeprom_settings.status_area_text, Color_White), 25 + 3 * STAT_CHR_W + 5, 419);
     }
     if (thermalManager.temp_bed.target != bedtarget) {
       bedtarget = thermalManager.temp_bed.target;
-      DWIN_Draw_IntValue(true, true, 0, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 25 + 4 * STAT_CHR_W + 6, 417, thermalManager.temp_bed.target);
+      DWIN_Draw_IntValue(true, true, 0, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 25 + 4 * STAT_CHR_W + 6, 417, thermalManager.temp_bed.target);
       DWIN_Draw_DegreeSymbol(GetColor(eeprom_settings.status_area_text, Color_White), 25 + 4 * STAT_CHR_W + 39, 419);
     }
   #endif
@@ -837,7 +820,7 @@ void CrealityDWINClass::Draw_Status_Area(bool icons/*=false*/) {
     }
     if (thermalManager.fan_speed[0] != fan) {
       fan = thermalManager.fan_speed[0];
-      DWIN_Draw_IntValue(true, true, 0, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 195 + 2 * STAT_CHR_W, 384, thermalManager.fan_speed[0]);
+      DWIN_Draw_IntValue(true, true, 0, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 195 + 2 * STAT_CHR_W, 384, thermalManager.fan_speed[0]);
     }
   #endif
 
@@ -851,12 +834,12 @@ void CrealityDWINClass::Draw_Status_Area(bool icons/*=false*/) {
     if (zoffsetvalue != offset) {
       offset = zoffsetvalue;
       if (zoffsetvalue < 0) {
-        DWIN_Draw_FloatValue(true, true, 0, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 2, 2, 207, 417, -zoffsetvalue * 100);
-        DWIN_Draw_String(false, true, geometry.menuFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 205, 419, "-");
+        DWIN_Draw_FloatValue(true, true, 0, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 2, 2, 207, 417, -zoffsetvalue * 100);
+        DWIN_Draw_String(false, true, Geometry::menuFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 205, 419, "-");
       }
       else {
-        DWIN_Draw_FloatValue(true, true, 0, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 2, 2, 207, 417, zoffsetvalue* 100);
-        DWIN_Draw_String(false, true, geometry.menuFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 205, 419, " ");
+        DWIN_Draw_FloatValue(true, true, 0, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 2, 2, 207, 417, zoffsetvalue* 100);
+        DWIN_Draw_String(false, true, Geometry::menuFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 205, 419, " ");
       }
     }
   #endif
@@ -865,11 +848,11 @@ void CrealityDWINClass::Draw_Status_Area(bool icons/*=false*/) {
   if (icons) {
     feedrate = -1;
     DWIN_ICON_Show(ICON, Icon::Speed, 113, 383);
-    DWIN_Draw_String(false, false, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 116 + 5 * STAT_CHR_W + 2, 384, F("%"));
+    DWIN_Draw_String(false, false, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 116 + 5 * STAT_CHR_W + 2, 384, F("%"));
   }
   if (feedrate_percentage != feedrate) {
     feedrate = feedrate_percentage;
-    DWIN_Draw_IntValue(true, true, 0, geometry.statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 116 + 2 * STAT_CHR_W, 384, feedrate_percentage);
+    DWIN_Draw_IntValue(true, true, 0, Geometry::statusFont, GetColor(eeprom_settings.status_area_text, Color_White), Color_Bg_Black, 3, 116 + 2 * STAT_CHR_W, 384, feedrate_percentage);
   }
 
   static float x = -1;
@@ -893,23 +876,23 @@ void CrealityDWINClass::Draw_Status_Area(bool icons/*=false*/) {
   if (update_x) {
     x = current_position.x;
     if ((update_x = axis_should_home(X_AXIS) && ui.get_blink()))
-      DWIN_Draw_String(false, true, geometry.menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 35, 459, "  -?-  ");
+      DWIN_Draw_String(false, true, Geometry::menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 35, 459, "  -?-  ");
     else
-      DWIN_Draw_FloatValue(true, true, 0, geometry.menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 3, 1, 35, 459, current_position.x * 10);
+      DWIN_Draw_FloatValue(true, true, 0, Geometry::menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 3, 1, 35, 459, current_position.x * 10);
   }
   if (update_y) {
     y = current_position.y;
     if ((update_y = axis_should_home(Y_AXIS) && ui.get_blink()))
-      DWIN_Draw_String(false, true, geometry.menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 120, 459, "  -?-  ");
+      DWIN_Draw_String(false, true, Geometry::menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 120, 459, "  -?-  ");
     else
-      DWIN_Draw_FloatValue(true, true, 0, geometry.menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 3, 1, 120, 459, current_position.y * 10);
+      DWIN_Draw_FloatValue(true, true, 0, Geometry::menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 3, 1, 120, 459, current_position.y * 10);
   }
   if (update_z) {
     z = current_position.z;
     if ((update_z = axis_should_home(Z_AXIS) && ui.get_blink()))
-      DWIN_Draw_String(false, true, geometry.menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 205, 459, "  -?-  ");
+      DWIN_Draw_String(false, true, Geometry::menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 205, 459, "  -?-  ");
         else
-      DWIN_Draw_FloatValue(true, true, 0, geometry.menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 3, 2, 205, 459, (current_position.z>=0) ? current_position.z * 100 : 0);
+      DWIN_Draw_FloatValue(true, true, 0, Geometry::menuFont, GetColor(eeprom_settings.coordinates_text, Color_White), Color_Bg_Black, 3, 2, 205, 459, (current_position.z>=0) ? current_position.z * 100 : 0);
   }
   DWIN_UpdateLCD();
 }
@@ -928,9 +911,9 @@ void CrealityDWINClass::Draw_Popup(const char *line1, const char *line2,const ch
     ypos = 230;
   if (icon != NoIcon) 
     DWIN_ICON_Show(ICON, icon, 101, 105);
-  DWIN_Draw_String(false, true, geometry.menuFont, Popup_Text_Color, Color_Bg_Window, (272 - 8 * strlen(line1)) / 2, ypos, F(line1));
-  DWIN_Draw_String(false, true, geometry.menuFont, Popup_Text_Color, Color_Bg_Window, (272 - 8 * strlen(line2)) / 2, ypos+30, F(line2));
-  DWIN_Draw_String(false, true, geometry.menuFont, Popup_Text_Color, Color_Bg_Window, (272 - 8 * strlen(line3)) / 2, ypos+60, F(line3));
+  DWIN_Draw_String(false, true, Geometry::menuFont, Popup_Text_Color, Color_Bg_Window, (272 - 8 * strlen(line1)) / 2, ypos, F(line1));
+  DWIN_Draw_String(false, true, Geometry::menuFont, Popup_Text_Color, Color_Bg_Window, (272 - 8 * strlen(line2)) / 2, ypos+30, F(line2));
+  DWIN_Draw_String(false, true, Geometry::menuFont, Popup_Text_Color, Color_Bg_Window, (272 - 8 * strlen(line3)) / 2, ypos+60, F(line3));
   if (mode == Popup) {
     DWIN_ICON_Show(ICON, Icon::Confirm_E, 26, 280);
     DWIN_ICON_Show(ICON, Icon::Cancel_E, 146, 280);
@@ -977,14 +960,14 @@ void CrealityDWINClass::Update_Status_Bar(bool refresh/*=false*/) {
     }
     dispmsg[len] = '\0';
     if (process == Print) {
-      DWIN_Draw_Rectangle(1, Color_Grey, 8, 214, geometry.screen.w-8, 238);
-      const int8_t npos = (geometry.screen.w - 30 * MENU_CHR_W) / 2;
-      DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.status_bar_text, Color_White), Color_Bg_Black, npos, 219, dispmsg);
+      DWIN_Draw_Rectangle(1, Color_Grey, 8, 214, Geometry::screen.w-8, 238);
+      const int8_t npos = (Geometry::screen.w - 30 * MENU_CHR_W) / 2;
+      DWIN_Draw_String(false, false, Geometry::menuFont, GetColor(eeprom_settings.status_bar_text, Color_White), Color_Bg_Black, npos, 219, dispmsg);
     }
     else {
-      DWIN_Draw_Rectangle(1, Color_Bg_Black, 8, 352, geometry.screen.w-8, 376);
-      const int8_t npos = (geometry.screen.w - 30 * MENU_CHR_W) / 2;
-      DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.status_bar_text, Color_White), Color_Bg_Black, npos, 357, dispmsg);
+      DWIN_Draw_Rectangle(1, Color_Bg_Black, 8, 352, Geometry::screen.w-8, 376);
+      const int8_t npos = (Geometry::screen.w - 30 * MENU_CHR_W) / 2;
+      DWIN_Draw_String(false, false, Geometry::menuFont, GetColor(eeprom_settings.status_bar_text, Color_White), Color_Bg_Black, npos, 357, dispmsg);
     }
     if (-pos >= 30)
       msgscrl = 0;
@@ -994,14 +977,14 @@ void CrealityDWINClass::Update_Status_Bar(bool refresh/*=false*/) {
     if (new_msg) {
       new_msg = false;
       if (process == Print) {
-        DWIN_Draw_Rectangle(1, Color_Grey, 8, 214, geometry.screen.w-8, 238);
-        const int8_t npos = (geometry.screen.w - strlen(statusmsg) * MENU_CHR_W) / 2;
-        DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.status_bar_text, Color_White), Color_Bg_Black, npos, 219, statusmsg);
+        DWIN_Draw_Rectangle(1, Color_Grey, 8, 214, Geometry::screen.w-8, 238);
+        const int8_t npos = (Geometry::screen.w - strlen(statusmsg) * MENU_CHR_W) / 2;
+        DWIN_Draw_String(false, false, Geometry::menuFont, GetColor(eeprom_settings.status_bar_text, Color_White), Color_Bg_Black, npos, 219, statusmsg);
       }
       else {
-        DWIN_Draw_Rectangle(1, Color_Bg_Black, 8, 352, geometry.screen.w-8, 376);
-        const int8_t npos = (geometry.screen.w - strlen(statusmsg) * MENU_CHR_W) / 2;
-        DWIN_Draw_String(false, false, geometry.menuFont, GetColor(eeprom_settings.status_bar_text, Color_White), Color_Bg_Black, npos, 357, statusmsg);
+        DWIN_Draw_Rectangle(1, Color_Bg_Black, 8, 352, Geometry::screen.w-8, 376);
+        const int8_t npos = (Geometry::screen.w - strlen(statusmsg) * MENU_CHR_W) / 2;
+        DWIN_Draw_String(false, false, Geometry::menuFont, GetColor(eeprom_settings.status_bar_text, Color_White), Color_Bg_Black, npos, 357, statusmsg);
       }
     }
   }
@@ -4510,7 +4493,7 @@ void CrealityDWINClass::Menu_Control() {
     selection++; // Select Down
     if (selection > scrollpos+MROWS) {
       scrollpos++;
-      DWIN_Frame_AreaMove(1, 2, MLINE, Color_Bg_Black, 0, 31, geometry.screen.w, 349);
+      DWIN_Frame_AreaMove(1, 2, MLINE, Color_Bg_Black, 0, 31, Geometry::screen.w, 349);
       Menu_Item_Handler(active_menu, selection);
     }
     DWIN_Draw_Rectangle(1, GetColor(eeprom_settings.cursor_color, Rectangle_Color), 0, MBASE(selection-scrollpos) - 18, 14, MBASE(selection-scrollpos) + 33);
@@ -4520,7 +4503,7 @@ void CrealityDWINClass::Menu_Control() {
     selection--; // Select Up
     if (selection < scrollpos) {
       scrollpos--;
-      DWIN_Frame_AreaMove(1, 3, MLINE, Color_Bg_Black, 0, 31, geometry.screen.w, 349);
+      DWIN_Frame_AreaMove(1, 3, MLINE, Color_Bg_Black, 0, 31, Geometry::screen.w, 349);
       Menu_Item_Handler(active_menu, selection);
     }
     DWIN_Draw_Rectangle(1, GetColor(eeprom_settings.cursor_color, Rectangle_Color), 0, MBASE(selection-scrollpos) - 18, 14, MBASE(selection-scrollpos) + 33);
@@ -4692,7 +4675,7 @@ void CrealityDWINClass::File_Control() {
     selection++; // Select Down
     if (selection > scrollpos+MROWS) {
       scrollpos++;
-      DWIN_Frame_AreaMove(1, 2, MLINE, Color_Bg_Black, 0, 31, geometry.screen.w, 349);
+      DWIN_Frame_AreaMove(1, 2, MLINE, Color_Bg_Black, 0, 31, Geometry::screen.w, 349);
       Draw_SD_Item(selection, selection-scrollpos);
     }
     DWIN_Draw_Rectangle(1, GetColor(eeprom_settings.cursor_color, Rectangle_Color), 0, MBASE(selection-scrollpos) - 18, 14, MBASE(selection-scrollpos) + 33);
@@ -4705,7 +4688,7 @@ void CrealityDWINClass::File_Control() {
     selection--; // Select Up
     if (selection < scrollpos) {
       scrollpos--;
-      DWIN_Frame_AreaMove(1, 3, MLINE, Color_Bg_Black, 0, 31, geometry.screen.w, 349);
+      DWIN_Frame_AreaMove(1, 3, MLINE, Color_Bg_Black, 0, 31, Geometry::screen.w, 349);
       Draw_SD_Item(selection, selection-scrollpos);
     }
     DWIN_Draw_Rectangle(1, GetColor(eeprom_settings.cursor_color, Rectangle_Color), 0, MBASE(selection-scrollpos) - 18, 14, MBASE(selection-scrollpos) + 33);

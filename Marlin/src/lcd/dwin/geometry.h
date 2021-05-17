@@ -29,6 +29,7 @@
 
 #include "../../inc/MarlinConfigPre.h"
 #include <cstdint>
+#include <cstring>
 #include "dwin.h"
 
 /* Geometry of the Creality display */
@@ -43,6 +44,10 @@ namespace Creality {
   struct Rectangle {
     Point tl; // top left
     Point br; // bottom right
+  public:
+    constexpr Rectangle Bottom(uint16_t height) const {
+      return { { tl.x, static_cast<uint16_t>(br.y - height) }, br };
+    }
   };
 
   struct Dimensions {
@@ -54,15 +59,9 @@ namespace Creality {
     }
   };
 
-  struct GridDimensions {
-    uint8_t w;
-    uint8_t h;
-  };
-
   struct Grid {
     Point origin;
     Dimensions step;
-    GridDimensions counts;
   public:
     constexpr Point At(uint8_t col, uint8_t row) const {
       return { static_cast<uint16_t>(origin.x + step.w * col), static_cast<uint16_t>(origin.y + step.h * row) };
@@ -80,7 +79,7 @@ namespace Creality {
 
     static constexpr Dimensions mainMenuItemSize = { 109, 99 };
     static constexpr Dimensions printMenuItemSize = { 79, 99 };
-    static constexpr uint16_t mainMenuTextHeight = 40;
+    static constexpr uint16_t iconMenuTextHeight = 40;
 
   public:
     static constexpr Dimensions Font_CharSize(DWIN::Font font);
@@ -92,8 +91,8 @@ namespace Creality {
   public:
     static constexpr Dimensions screen = { screenShortSide, screenLongSide };
     static constexpr uint16_t titleHeight = 30;
-    static constexpr Grid mainMenuGrid = { { 17, 130 }, { 128, 116 }, { 2, 2 } };
-    static constexpr Grid printMenuGrid = { { 8, 252 }, { 176 , 0 }, { 3, 1 } };
+    static constexpr Grid mainMenuGrid = { { 17, 130 }, { 128, 116 } };
+    static constexpr Grid printMenuGrid = { { 8, 252 }, { 88 , 0 } };
     static constexpr Point logoPos = { 71, 72 };
     static constexpr Rectangle printProgressBarPos = { { 15, 93 }, { 256, 113 } };
     static constexpr Point printPercentPos = { 109, 133 };
@@ -142,4 +141,6 @@ namespace Creality {
     const auto d = Font_TextDimensions(font, text);
     return { Center(d.w, rect.tl.x, rect.br.x), Center(d.h, rect.tl.y, rect.br.y) };
   }
+
+  using Geometry = PortraitGeometry;
 } // namespace Creality
