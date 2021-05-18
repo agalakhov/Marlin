@@ -39,15 +39,17 @@ using std::variant;
 
 namespace Creality {
 
-  struct MenuTypeList {
-  };
+  // Menu type tag struct: plain list
+  struct MenuTypeList { };
 
+  // Menu type tag struct: icons
   struct MenuTypeIcons {
     const Dimensions size;
     const Grid grid;
     const uint8_t columns;
   };
 
+  // One or two icons for a menu item
   struct MenuIcons {
     DWIN::Icon normal;
     DWIN::Icon selected;
@@ -62,6 +64,7 @@ namespace Creality {
     { }
   };
 
+  // Predicate function wrapper. If false, menu item is not displayed.
   struct MenuItemPredicate {
     bool (* const condition)();
     bool invert;
@@ -79,28 +82,34 @@ namespace Creality {
     }
   };
 
+  // Predicate: display menu item only if function returns true
   inline constexpr MenuItemPredicate Only_If(bool (* const cond)()) {
     return MenuItemPredicate(cond, false);
   }
 
+  // Predicate: display menu item only if function returns false
   inline constexpr MenuItemPredicate Only_If_Not(bool (* const cond)()) {
     return MenuItemPredicate(cond, true);
   }
 
+  // Just a item of struct Menu
   struct MenuItem {
     const MenuIcons icons;
     const char * const text;
     const MenuItemPredicate predicate;
   };
 
+  // Sentinel. Each menu MUST end with this one.
   constexpr MenuItem EndMenu = { DWIN::NoIcon, nullptr };
 
+  // Populate this struct as static constant in order to get a menu.
   struct Menu {
     const char * const title;
     const variant<MenuTypeList, MenuTypeIcons> type;
     const MenuItem items[];
   };
 
+  // The menu engine class. This handles all the menus.
   class MenuEngine {
   public:
     void Draw_IconicMenu(const MenuTypeIcons& type, const MenuItem items[], uint16_t selection);
