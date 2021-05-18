@@ -31,7 +31,7 @@
 
 namespace Creality {
 
-  void MenuEngine::Draw_IconicMenu(const MenuTypeIcons& type, const MenuItem items[], uint16_t selection) {
+  void MenuEngine::Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection) {
     uint8_t idx = 0;
     uint8_t column = 0;
     Point pos = type.grid.origin;
@@ -51,7 +51,7 @@ namespace Creality {
     }
   }
 
-  void MenuEngine::Draw_IconicItem(const MenuTypeIcons& type, const MenuItem& item, Point pos, bool selected) {
+  void MenuEngine::Draw_IconicItem(const MenuType_Icons& type, const MenuItem& item, Point pos, bool selected) {
     constexpr auto font = Geometry::menuFont;
     const auto highlightColor = Color_White; // TODO GetColor(eeprom_settings.highlight_box, Color_White);
     const auto rect = type.size.AtPoint(pos);
