@@ -40,10 +40,10 @@ using ::std::variant;
 namespace Creality {
 
   // Menu type tag struct: plain list
-  struct MenuTypeList { };
+  struct MenuType_List { };
 
   // Menu type tag struct: icons
-  struct MenuTypeIcons {
+  struct MenuType_Icons {
     const Dimensions size;
     const Grid grid;
     const uint8_t columns;
@@ -82,6 +82,39 @@ namespace Creality {
     }
   };
 
+  struct Menu;
+
+  // Menu item action: Enter submenu
+  struct Action_EnterMenu {
+    const Menu& menu;
+  };
+
+  // Menu item action: go to parent menu
+  struct Action_LeaveMenu {
+  };
+
+  // Menu item action: execute a function
+  struct Action_Do {
+    void (* const function)();
+  };
+
+  // Menu item action: edit a variable
+  struct Action_Edit {
+    // TODO
+  };
+
+  // Menu item action: function does not exist
+  struct Action_Dummy {
+  };
+
+  typedef variant<
+    Action_EnterMenu,
+    Action_LeaveMenu,
+    Action_Do,
+    Action_Edit,
+    Action_Dummy
+  > MenuAction;
+
   // Predicate: display menu item only if function returns true
   inline constexpr MenuItemPredicate Only_If(bool (* const cond)()) {
     return MenuItemPredicate(cond, false);
@@ -96,25 +129,26 @@ namespace Creality {
   struct MenuItem {
     const MenuIcons icons;
     const char * const text;
+    const MenuAction action;
     const MenuItemPredicate predicate;
   };
 
   // Sentinel. Each menu MUST end with this one.
-  constexpr MenuItem EndMenu = { DWIN::NoIcon, nullptr };
+  constexpr MenuItem EndMenu = { DWIN::NoIcon, nullptr, Action_Dummy{} };
 
   // Populate this struct as static constant in order to get a menu.
   struct Menu {
     const char * const title;
-    const variant<MenuTypeList, MenuTypeIcons> type;
+    const variant<MenuType_List, MenuType_Icons> type;
     const MenuItem items[];
   };
 
   // The menu engine class. This handles all the menus.
   class MenuEngine {
   public:
-    void Draw_IconicMenu(const MenuTypeIcons& type, const MenuItem items[], uint16_t selection);
+    void Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection);
   private:
-    void Draw_IconicItem(const MenuTypeIcons& type, const MenuItem& item, Point pos, bool selected);
+    void Draw_IconicItem(const MenuType_Icons& type, const MenuItem& item, Point pos, bool selected);
   };
 
 } // namespace Creality
