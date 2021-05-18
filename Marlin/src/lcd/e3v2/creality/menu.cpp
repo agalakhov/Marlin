@@ -35,8 +35,9 @@ namespace Creality {
     uint8_t idx = 0;
     uint8_t column = 0;
     Point pos = type.grid.origin;
-    for (const MenuItem * item = items; idx < 4 && item->text != nullptr; ++item, ++idx) {
-      if (true) {
+    for (const MenuItem * item = items; idx < 4 && item->text != nullptr; ++item) {
+      if (item->predicate()) {
+        ++idx;
         this->Draw_IconicItem(type, *item, pos, (idx == selection));
         ++column;
         if (column < type.columns) {
@@ -54,7 +55,8 @@ namespace Creality {
     constexpr auto font = Geometry::menuFont;
     const auto highlightColor = Color_White; // TODO GetColor(eeprom_settings.highlight_box, Color_White);
     const auto rect = type.size.AtPoint(pos);
-    DWIN_ICON_Show(DWIN::ICON, (selected && item.selectedIcon != DWIN::NoIcon) ? item.selectedIcon : item.icon, pos.x, pos.y);
+    const auto icon = (selected && item.icons.selected != DWIN::NoIcon) ? item.icons.selected : item.icons.normal;
+    DWIN_ICON_Show(DWIN::ICON, icon, pos.x, pos.y);
     if (selected) {
       DWIN_Draw_Rectangle(0, highlightColor, rect.tl.x, rect.tl.y, rect.br.x, rect.br.y);
     }

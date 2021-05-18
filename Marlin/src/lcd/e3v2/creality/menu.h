@@ -48,13 +48,52 @@ namespace Creality {
     const uint8_t columns;
   };
 
-  struct MenuItem {
-    const DWIN::Icon icon;
-    const DWIN::Icon selectedIcon;
-    const char * const text;
+  struct MenuIcons {
+    DWIN::Icon normal;
+    DWIN::Icon selected;
+  public:
+    constexpr MenuIcons(DWIN::Icon icon)
+      : normal(icon)
+      , selected(DWIN::NoIcon)
+    { }
+    constexpr MenuIcons(DWIN::Icon normalIcon, DWIN::Icon selectedIcon)
+      : normal(normalIcon)
+      , selected(selectedIcon)
+    { }
   };
 
-  constexpr MenuItem EndMenu = { DWIN::NoIcon, DWIN::NoIcon, nullptr };
+  struct MenuItemPredicate {
+    bool (* const condition)();
+    bool invert;
+  public:
+    constexpr MenuItemPredicate()
+      : condition(nullptr)
+      , invert(false)
+    { }
+    constexpr MenuItemPredicate(bool (* const cond)(), bool inv)
+      : condition(cond)
+      , invert(inv)
+    { }
+    bool operator()() const {
+      return condition ? (invert ? (! condition()) : condition()) : true;
+    }
+  };
+
+  inline constexpr MenuItemPredicate Only_If(bool (* const cond)()) {
+    return MenuItemPredicate(cond, false);
+  }
+
+  inline constexpr MenuItemPredicate Only_If_Not(bool (* const cond)()) {
+    return MenuItemPredicate(cond, true);
+  }
+
+  struct MenuItem {
+    const MenuIcons icons;
+    const char * const text;
+    const MenuItemPredicate predicate;
+  };
+
+  constexpr MenuItem EndMenu = { DWIN::NoIcon, nullptr };
 
   struct Menu {
     const char * const title;
