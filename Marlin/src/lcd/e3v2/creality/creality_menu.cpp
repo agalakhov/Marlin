@@ -72,3 +72,102 @@ const Menu Creality_printMenu = {
   }
 };
 
+static const Menu moveMenu = {
+  "Move",
+  MenuType_List{},
+  {
+    { Icon::Back,         "Back",             Action_LeaveMenu{} },
+    // TODO
+    EndMenu
+  }
+};
+
+static const Menu homeMenu = {
+  "Homing Menu",
+  MenuType_List{},
+  {
+    { Icon::Back,         "Back",             Action_LeaveMenu{} },
+    // TODO
+    EndMenu
+  }
+};
+
+static const Menu preheatMenu = {
+  "Preheat",
+  MenuType_List{},
+  {
+    { Icon::Back,         "Back",             Action_LeaveMenu{} },
+    // TODO
+    EndMenu
+  }
+};
+
+static const Menu prepareMenu = {
+  "Prepare",
+  MenuType_List{},
+  {
+    { Icon::Back,         "Back",             Action_LeaveMenu{} },
+    { Icon::Axis,         "Move",             Action_EnterMenu{moveMenu} },
+//  { Icon::CloseMotor, "Disable Stepper",  Action_GCode{"M84"} },
+    { Icon::SetHome,      "Homing",           Action_EnterMenu{homeMenu} },
+
+//  { Icon::PrintSize,  "Manual Leveling",  Action_Do{ manual leveling },
+/*         if (axes_should_home()) {
+              Popup_Handler(Home);
+              gcode.home_all_axes(true);
+            }
+            #if HAS_LEVELING
+              level_state = planner.leveling_active;
+              set_bed_leveling_enabled(false);
+            #endif
+            Draw_Menu(ManualLevel);
+          }
+*/
+
+    #if HAS_ZOFFSET_ITEM
+//  { Icon::Zoffset,      "Z-Offset",         Action_Do{ z_offset } },
+/*
+              #if HAS_LEVELING
+                level_state = planner.leveling_active;
+                set_bed_leveling_enabled(false);
+              #endif
+              Draw_Menu(ZOffset);
+*/
+    #endif
+
+    #if HAS_PREHEAT
+      { Icon::Temperature,    "Preheat",      Action_EnterMenu{preheatMenu} },
+//    { Icon::Cool,           "Cooldown",     Action_Do{ cooldown }, 
+/*
+  thermalManager.zero_fan_speeds();
+  thermalManager.disable_all_heaters();
+ */
+    #endif
+
+    #if ENABLED(ADVANCED_PAUSE_FEATURE)
+      { Icon::ResumeEEPROM, "Change Filament", 
+        #if ENABLED(FILAMENT_LOAD_UNLOAD_GCODES)
+          Action_EnterMenu{changeFilamentMenu},
+        #else
+        /*
+                if (thermalManager.temp_hotend[0].target < thermalManager.extrude_min_temp) {
+                  Popup_Handler(ETemp);
+                }
+                else {
+                  if (thermalManager.temp_hotend[0].celsius < thermalManager.temp_hotend[0].target-2) {
+                    Popup_Handler(Heating);
+                    thermalManager.wait_for_hotend(0);
+                  }
+                  Popup_Handler(FilChange);
+                  char buf[20];
+                  sprintf(buf, "M600 B1 R%i", thermalManager.temp_hotend[0].target);
+                  gcode.process_subcommands_now_P(buf);
+                }
+         */
+        #endif
+      },
+    #endif
+
+    EndMenu
+  }
+};
