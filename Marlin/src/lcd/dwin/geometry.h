@@ -80,6 +80,12 @@ namespace Creality {
     static constexpr Dimensions mainMenuItemSize = { 109, 99 };
     static constexpr Dimensions printMenuItemSize = { 79, 99 };
     static constexpr uint16_t iconMenuTextHeight = 40;
+    static constexpr Dimensions listItemIconSize = { 20, 20 };
+    static constexpr uint16_t listItemCursorWidth = 14;
+    static constexpr uint16_t listItemLeftMargin = 2;
+    static constexpr uint16_t listItemLeftPadding = 20;
+    static constexpr uint16_t listItemTextOffset = 4;
+    static constexpr uint16_t listItemPadding = 16;
 
   public:
     static constexpr Dimensions Font_CharSize(DWIN::Font font);
@@ -98,6 +104,9 @@ namespace Creality {
     static constexpr Point printPercentPos = { 109, 133 };
     static constexpr Point printElapsedTimePos = { 42, 187 };
     static constexpr Point printRemainingTimePos = { 176, 187 };
+    static constexpr uint16_t listItemRightIconOffset = 200;
+    static constexpr uint16_t listItemLineLeft = listItemCursorWidth + listItemLeftMargin;
+    static constexpr uint16_t listItemLineRight = screen.w - listItemLineLeft;
   };
 
   // These functions must be defined in header file since they all are constexpr.

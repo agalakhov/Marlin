@@ -147,8 +147,10 @@ namespace Creality {
   class MenuEngine {
   public:
     void Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection);
+    void Draw_ListMenu(const MenuType_List& type, const MenuItem items[], uint16_t selection);
   private:
     void Draw_IconicItem(const MenuType_Icons& type, const MenuItem& item, Point pos, bool selected);
+    void Draw_ListItem(const MenuType_List& type, const MenuItem& item, Point pos, bool selected);
   };
 
 } // namespace Creality
