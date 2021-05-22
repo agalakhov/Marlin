@@ -30,7 +30,7 @@
 #if ENABLED(DWIN_CREALITY_LCD)
 
 #include "creality_dwin.h"
-#include "geometry.h"
+#include "creality_menu.h"
 
 #include "../marlinui.h"
 #include "../../MarlinCore.h"
@@ -534,28 +534,8 @@ void CrealityDWINClass::Redraw_Screen() {
 
 /* Primary Menus and Screen Elements */
 
-const Creality::Menu mainMenu = {
-  "Main Menu",
-  Creality::MenuType_Icons {
-      Geometry::mainMenuItemSize,
-      Geometry::mainMenuGrid,
-      2
-  },
-  {
-    { { Icon::Print_0, Icon::Print_1 }, "Print", Creality::Action_Dummy{} },
-    { { Icon::Prepare_0, Icon::Prepare_1 }, "Prepare", Creality::Action_Dummy{} },
-    { { Icon::Control_0, Icon::Control_1 }, "Control", Creality::Action_Dummy{} },
-    #if ANY(HAS_ONESTEP_LEVELING, AUTO_BED_LEVELING_UBL, PROBE_MANUALLY)
-      { { Icon::Leveling_0, Icon::Leveling_1 }, "Level", Creality::Action_Dummy{} },
-    #else
-      { { Icon::Info_0, Icon::Info_1}, "Info", Creality::Action_Dummy{} },
-    #endif
-    Creality::EndMenu
-  }
-};
-
 void CrealityDWINClass::Main_Menu_Icons() {
-  this->menuEngine.Draw_IconicMenu(std::get<Creality::MenuType_Icons>(mainMenu.type), mainMenu.items, selection);
+  this->menuEngine.Draw_IconicMenu(std::get<Creality::MenuType_Icons>(Creality_mainMenu.type), Creality_mainMenu.items, selection);
 }
 
 void CrealityDWINClass::Draw_Main_Menu(uint8_t select/*=0*/) {
@@ -568,28 +548,8 @@ void CrealityDWINClass::Draw_Main_Menu(uint8_t select/*=0*/) {
   Main_Menu_Icons();
 }
 
-static bool Helper_IsPrinting() {
-  return printing;
-}
-
-const Creality::Menu printMenu = {
-  nullptr,
-  Creality::MenuType_Icons {
-      Geometry::printMenuItemSize,
-      Geometry::printMenuGrid,
-      3
-  },
-  {
-    { { Icon::Setup_0, Icon::Setup_1 }, "Tune", Creality::Action_Dummy{} },
-    { { Icon::Pause_0, Icon::Pause_1 }, "Pause", Creality::Action_Dummy{}, Creality::Only_If(Helper_IsPrinting) },
-    { { Icon::Continue_0,  Icon::Continue_1}, "Print", Creality::Action_Dummy{}, Creality::Only_If_Not(Helper_IsPrinting) },
-    { { Icon::Stop_0, Icon::Stop_1}, "Stop", Creality::Action_Dummy{} },
-    Creality::EndMenu
-  }
-};
-
 void CrealityDWINClass::Print_Screen_Icons() {
-  this->menuEngine.Draw_IconicMenu(std::get<Creality::MenuType_Icons>(printMenu.type), printMenu.items, selection);
+  this->menuEngine.Draw_IconicMenu(std::get<Creality::MenuType_Icons>(Creality_printMenu.type), Creality_printMenu.items, selection);
 }
 
 void CrealityDWINClass::Draw_Print_Screen() {
