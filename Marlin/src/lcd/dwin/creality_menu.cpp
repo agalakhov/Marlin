@@ -27,11 +27,12 @@
  */
 
 #include "creality_menu.h"
+#include "creality_dwin.h"
 
 using namespace Creality;
 using DWIN::Icon;
 
-const Menu Creality_mainMenu = {
+const Creality::Menu Creality_mainMenu = {
   "Main Menu",
   MenuType_Icons {
       Geometry::mainMenuItemSize,
@@ -39,13 +40,13 @@ const Menu Creality_mainMenu = {
       2
   },
   {
-    { { Icon::Print_0, Icon::Print_1 }, "Print", Action_Dummy{} },
-    { { Icon::Prepare_0, Icon::Prepare_1 }, "Prepare", Action_Dummy{} },
-    { { Icon::Control_0, Icon::Control_1 }, "Control", Action_Dummy{} },
+    { { Icon::Print_0, Icon::Print_1 }, "Print", Action_Do{ CrealityDWINClass::Tmp_PrintClicked } },
+    { { Icon::Prepare_0, Icon::Prepare_1 }, "Prepare", Action_Do{ CrealityDWINClass::Tmp_PrepareClicked } },
+    { { Icon::Control_0, Icon::Control_1 }, "Control", Action_Do{ CrealityDWINClass::Tmp_SettingsClicked } },
     #if ANY(HAS_ONESTEP_LEVELING, AUTO_BED_LEVELING_UBL, PROBE_MANUALLY)
-      { { Icon::Leveling_0, Icon::Leveling_1 }, "Level", Action_Dummy{} },
+      { { Icon::Leveling_0, Icon::Leveling_1 }, "Level", Action_Do{ CrealityDWINClass::Tmp_LevelClicked } },
     #else
-      { { Icon::Info_0, Icon::Info_1}, "Info", Action_Dummy{} },
+      { { Icon::Info_0, Icon::Info_1}, "Info", Action_Do{ CrealityDWINClass::Tmp_InfoClicked } },
     #endif
     Creality::EndMenu
   }
@@ -56,7 +57,7 @@ static bool Helper_IsPrinting() {
   return printing;
 }
 
-const Menu Creality_printMenu = {
+const Creality::Menu Creality_printMenu = {
   nullptr,
   Creality::MenuType_Icons {
       Geometry::printMenuItemSize,
@@ -72,7 +73,7 @@ const Menu Creality_printMenu = {
   }
 };
 
-static const Menu moveMenu = {
+static const Creality::Menu moveMenu = {
   "Move",
   MenuType_List{},
   {
@@ -82,7 +83,7 @@ static const Menu moveMenu = {
   }
 };
 
-static const Menu homeMenu = {
+static const Creality::Menu homeMenu = {
   "Homing Menu",
   MenuType_List{},
   {
@@ -92,7 +93,7 @@ static const Menu homeMenu = {
   }
 };
 
-static const Menu preheatMenu = {
+static const Creality::Menu preheatMenu = {
   "Preheat",
   MenuType_List{},
   {
@@ -102,7 +103,7 @@ static const Menu preheatMenu = {
   }
 };
 
-static const Menu prepareMenu = {
+static const Creality::Menu prepareMenu = {
   "Prepare",
   MenuType_List{},
   {
