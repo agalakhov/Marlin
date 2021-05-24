@@ -38,10 +38,10 @@ namespace Creality {
     : stackPos(0)
   { }
 
-  void MenuEngine::EnterMenu(const Menu * menu) {
+  void MenuEngine::EnterMenu(const Menu& menu) {
     if (this->stackPos < MAX_MENU_DEPTH) {
       this->menuStack[this->stackPos++] = {
-        .menu = menu,
+        .menu = &menu,
         .selection = 0,
         .scroll = 0,
       };
@@ -127,6 +127,29 @@ namespace Creality {
         }
       }
     }
+  }
+
+  void MenuEngine::Perform_Action(const MenuAction& action) {
+    struct Actor {
+      MenuEngine* self;
+    public:
+      void operator() (const Action_EnterMenu& enter) {
+        self->EnterMenu(enter.menu);
+      }
+      void operator() (const Action_LeaveMenu&) {
+        self->LeaveMenu();
+      }
+      void operator() (const Action_Do& func) {
+        func.function();
+      }
+      void operator() (const Action_Edit& edit) {
+        // TODO
+      }
+      void operator() (const Action_Dummy&) {
+      }
+    };
+
+    std::visit(Actor { this }, action);
   }
 
   void MenuEngine::Draw_ListMenu(const MenuType_List& type, const MenuItem items[], uint16_t selection) {
