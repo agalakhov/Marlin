@@ -146,11 +146,29 @@ namespace Creality {
   // The menu engine class. This handles all the menus.
   class MenuEngine {
   public:
-    void Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection);
-    void Draw_ListMenu(const MenuType_List& type, const MenuItem items[], uint16_t selection);
+    MenuEngine();
+    void EnterMenu(const Menu * menu);
+    void LeaveMenu();
+    void Redraw();
+    void Control();
+  public: // TODO private
+    static void Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection);
+    static void Draw_ListMenu(const MenuType_List& type, const MenuItem items[], uint16_t selection);
   private:
-    void Draw_IconicItem(const MenuType_Icons& type, const MenuItem& item, Point pos, bool selected);
-    void Draw_ListItem(const MenuType_List& type, const MenuItem& item, Point pos, bool selected);
+    static void Draw_IconicItem(const MenuType_Icons& type, const MenuItem& item, Point pos, bool selected);
+    static void Draw_ListItem(const MenuType_List& type, const MenuItem& item, Point pos, bool selected);
+  private:
+    MenuEngine(const MenuEngine&) = delete;
+    MenuEngine& operator= (const MenuEngine&) = delete;
+  private:
+    struct StackRec {
+      const Menu * menu;
+      uint8_t selection; // relative to the scroll position
+      uint16_t scroll;
+    };
+    static constexpr uint8_t MAX_MENU_DEPTH = 8;
+    uint8_t stackPos;
+    StackRec menuStack[MAX_MENU_DEPTH];
   };
 
 } // namespace Creality

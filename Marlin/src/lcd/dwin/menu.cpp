@@ -28,19 +28,95 @@
 
 #include "menu.h"
 #include "dwin.h"
+#include "rotary_encoder.h"
 
 using std::holds_alternative;
 
 namespace Creality {
 
+  MenuEngine::MenuEngine()
+    : stackPos(0)
+  { }
+
+  void MenuEngine::EnterMenu(const Menu * menu) {
+    if (this->stackPos < MAX_MENU_DEPTH) {
+      this->menuStack[this->stackPos++] = {
+        .menu = menu,
+        .selection = 0,
+        .scroll = 0,
+      };
+    }
+    this->Redraw();
+  }
+
+  void MenuEngine::LeaveMenu() {
+    if (this->stackPos > 0) {
+      this->stackPos--;
+    }
+    this->Redraw();
+  }
+
+  void MenuEngine::Redraw() {
+    struct Draw {
+      const MenuItem * items;
+      uint16_t selection;
+    public:
+      void operator() (const MenuType_Icons& type) const {
+        return MenuEngine::Draw_IconicMenu(type, items, selection);
+      }
+      void operator() (const MenuType_List& type) const {
+        return MenuEngine::Draw_ListMenu(type, items, selection);
+      }
+    };
+
+    if (this->stackPos > 0) {
+      const auto& rec = this->menuStack[this->stackPos - 1];
+      Draw d {
+        rec.menu->items,
+        rec.selection,
+      };
+      std::visit(d, rec.menu->type);
+    }
+  }
+
+  void MenuEngine::Control() {
+    if (this->stackPos == 0) {
+      return;
+    }
+    auto& rec = this->menuStack[this->stackPos - 1];
+
+    switch (Encoder_ReceiveAnalyze()) {
+      case ENCODER_DIFF_NO:
+        break;
+      case ENCODER_DIFF_CCW:
+        if (rec.selection > 0) {
+          rec.selection--;
+        } else if (rec.scroll > 0) {
+          rec.scroll--;
+        }
+        break;
+      case ENCODER_DIFF_CW:
+        if (rec.selection < 5) {
+          rec.selection++;
+        } else if (rec.scroll < 0) {
+          rec.scroll++;
+        }
+        break;
+      case ENCODER_DIFF_ENTER:
+        break;
+    }
+
+    this->Redraw();
+  }
+
   void MenuEngine::Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection) {
     uint8_t idx = 0;
     uint8_t column = 0;
     Point pos = type.grid.origin;
-    for (const MenuItem * item = items; idx < 4 && item->text != nullptr; ++item) {
+    for (const MenuItem * item = items; item->text != nullptr; ++item) {
       if (item->predicate()) {
         ++idx;
-        this->Draw_IconicItem(type, *item, pos, (idx == selection));
+        Draw_IconicItem(type, *item, pos, (idx == selection));
         ++column;
         if (column < type.columns) {
           pos.x += type.grid.step.w;
@@ -62,7 +138,7 @@ namespace Creality {
     for (const MenuItem * item = items; idx < 4 && item->text != nullptr; ++item) {
       if (item->predicate()) {
         ++idx;
-        this->Draw_ListItem(type, *item, pos, (idx == selection));
+        Draw_ListItem(type, *item, pos, (idx == selection));
         pos.x += Geometry::listItemIconSize.h + 2 * Geometry::listItemPadding + 1;
       }
     }
