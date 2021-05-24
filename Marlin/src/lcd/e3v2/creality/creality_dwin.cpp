@@ -592,7 +592,8 @@ void CrealityDWINClass::Redraw_Screen() {
 /* Primary Menus and Screen Elements */
 
 void CrealityDWINClass::Main_Menu_Icons() {
-  this->menuEngine.Draw_IconicMenu(std::get<Creality::MenuType_Icons>(Creality_mainMenu.type), Creality_mainMenu.items, selection);
+  this->menuEngine.LeaveMenu();
+  this->menuEngine.EnterMenu(Creality_mainMenu);
 }
 
 void CrealityDWINClass::Draw_Main_Menu(uint8_t select/*=0*/) {
@@ -4850,38 +4851,29 @@ void CrealityDWINClass::Confirm_Handler(PopupID popupid) {
 /* Navigation and Control */
 
 void CrealityDWINClass::Main_Menu_Control() {
-  ENCODER_DiffState encoder_diffState = Encoder_ReceiveAnalyze();
-  if (encoder_diffState == ENCODER_DIFF_NO) return;
-  if (encoder_diffState == ENCODER_DIFF_CW && selection < 3) {
-    selection++; // Select Down
-    Main_Menu_Icons();
-  }
-  else if (encoder_diffState == ENCODER_DIFF_CCW && selection > 0) {
-    selection--; // Select Up
-    Main_Menu_Icons();
-  }
-  else if (encoder_diffState == ENCODER_DIFF_ENTER)
-    switch(selection) {
-      case 0:
-        card.mount();
-        Draw_SD_List();
-        break;
-      case 1:
-        Draw_Menu(Prepare);
-        break;
-      case 2:
-        Draw_Menu(Control);
-        break;
-      case 3:
-        #if HAS_MESH
-          Draw_Menu(Leveling);
-        #else
-          Draw_Menu(InfoMain);
-        #endif
-        break;
-    }
+  this->menuEngine.Control();
   DWIN_UpdateLCD();
 }
+
+void CrealityDWINClass::Tmp_PrintClicked() {
+  card.mount();
+  CrealityDWIN.Draw_SD_List();
+}
+void CrealityDWINClass::Tmp_PrepareClicked() {
+  CrealityDWIN.Draw_Menu(Prepare);
+}
+void CrealityDWINClass::Tmp_SettingsClicked() {
+  CrealityDWIN.Draw_Menu(Control);
+}
+void CrealityDWINClass::Tmp_LevelClicked() {
+  #if HAS_MESH
+    CrealityDWIN.Draw_Menu(Leveling);
+  #endif
+}
+void CrealityDWINClass::Tmp_InfoClicked() {
+  CrealityDWIN.Draw_Menu(InfoMain);
+}
+
 
 void CrealityDWINClass::Menu_Control() {
   ENCODER_DiffState encoder_diffState = Encoder_ReceiveAnalyze();

@@ -213,6 +213,15 @@ public:
   void Load_Settings(const char *buff);
   void Reset_Settings();
 
+public:
+
+  // temporary functions for refactoring
+  static void Tmp_PrintClicked();
+  static void Tmp_PrepareClicked();
+  static void Tmp_SettingsClicked();
+  static void Tmp_LevelClicked();
+  static void Tmp_InfoClicked();
+
 private:
   void Draw_Time(Creality::Point position, uint16_t seconds);
 };
