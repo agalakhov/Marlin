@@ -36,7 +36,6 @@ using DWIN::Icon;
 
 // Menu structures MUST land in .rodata section. Make sure they all are const constexpr.
 
-
 static const constexpr Creality::Menu moveMenu = {
   "Move",
   MenuType_List{
@@ -44,7 +43,7 @@ static const constexpr Creality::Menu moveMenu = {
     .on_leave = CrealityActions::RetractProbe,
   },
   {
-    { Icon::Back,   "Back",     Action_LeaveMenu{} },
+    MenuBack(),
 //TODO    { Icon::MoveX,  "Move X",   Action_Value{current_position.x, X_MIN_POS, X_MAX_POS, 10} },
 //TODO    { Icon::MoveY,  "Move Y",   Action_Value{current_position.y, Y_MIN_POS, Y_MAX_POS, 10} },
 //TODO    { Icon::MoveZ,  "Move Z",   Action_Value{current_position.z, Z_MIN_POS, Z_MAX_POS, 10} },
@@ -63,22 +62,12 @@ static const constexpr Creality::Menu homeMenu = {
   "Homing Menu",
   MenuType_List{},
   {
-    { Icon::Back,       "Back",               Action_LeaveMenu{} },
+    MenuBack(),
     { Icon::Homing,     "Home All",           Action_Do{CrealityActions::HomeAll} },
 //TODO    { Icon::MoveX,      "Home X",             Action_GCode_Sync{Home, "G28 X"} },
 //TODO    { Icon::MoveY,      "Home Y",             Action_GCode_Sync{Home, "G28 Y"} },
 //TODO    { Icon::MoveZ,      "Home Z",             Action_GCode_Sync{Home, "G28 Z"} },
 //TODO    { Icon::SetHome,    "Set Home Position",  Action_GCode_Beep{"G92 X0 Y0 Z0"} },
-    EndMenu()
-  }
-};
-
-static const constexpr Creality::Menu preheatMenu = {
-  "Preheat",
-  MenuType_List{},
-  {
-    { Icon::Back,         "Back",             Action_LeaveMenu{} },
-    // TODO
     EndMenu()
   }
 };
@@ -90,7 +79,30 @@ static const constexpr Creality::Menu manualLevelingMenu = {
     .on_leave = CrealityActions::ReEnableLeveling,
   },
   {
-    { Icon::Back,       "Back",             Action_LeaveMenu{}                      },
+    MenuBack(),
+    // TODO
+    EndMenu()
+  }
+};
+
+static const constexpr Creality::Menu zOffsetMenu = {
+  "Z Offset",
+  MenuType_List {
+      .on_enter = CrealityActions::DisableLeveling,
+      .on_leave = CrealityActions::ReEnableLeveling,
+  },
+  {
+    MenuBack(),
+    // TODO
+    EndMenu()
+  }
+};
+
+static const constexpr Creality::Menu preheatMenu = {
+  "Preheat",
+  MenuType_List{},
+  {
+    MenuBack(),
     // TODO
     EndMenu()
   }
@@ -100,7 +112,7 @@ static const constexpr Creality::Menu prepareMenu = {
   "Prepare",
   MenuType_List{},
   {
-    { Icon::Back,       "Back",             Action_LeaveMenu{}                      },
+    MenuBack(),
     { Icon::Axis,       "Move",             Action_EnterMenu{moveMenu}              },
 //TODO    { Icon::CloseMotor,   "Disable Stepper",  Action_GCode{"M84"} },
     { Icon::SetHome,    "Homing",           Action_EnterMenu{homeMenu}              },
