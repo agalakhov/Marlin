@@ -39,8 +39,31 @@ using ::std::variant;
 
 namespace Creality {
 
+  // Safe wrapper around a function pointer
+  template <typename T>
+  class Func {
+  public:
+    constexpr Func()
+      : fp(nullptr)
+    { }
+    constexpr Func(T (* func)())
+      : fp(func)
+    { }
+    operator bool () const {
+      return !!this->fp;
+    }
+    T operator() () const {
+      return (this->fp) ? this->fp() : T();
+    }
+  private:
+    T (* const fp)();
+  };
+
   // Menu type tag struct: plain list
-  struct MenuType_List { };
+  struct MenuType_List {
+    const Func<void> on_enter;
+    const Func<void> on_leave;
+  };
 
   // Menu type tag struct: icons
   struct MenuType_Icons {
@@ -66,7 +89,7 @@ namespace Creality {
 
   // Predicate function wrapper. If false, menu item is not displayed.
   struct MenuItemPredicate {
-    bool (* const condition)();
+    const Func<bool> condition;
     const bool invert;
   public:
     constexpr MenuItemPredicate()
@@ -95,7 +118,7 @@ namespace Creality {
 
   // Menu item action: execute a function
   struct Action_Do {
-    void (* const function)();
+    const Func<void> function;
   };
 
   // Menu item action: edit a variable
@@ -140,7 +163,7 @@ namespace Creality {
   //
   // This is a function and not a constant to avoid calling copy constructor.
   inline constexpr MenuItem EndMenu() {
-      return { DWIN::NoIcon, nullptr, Action_Dummy{} };
+    return { DWIN::NoIcon, nullptr, Action_Dummy{} };
   }
 
   // Populate this struct as static constant in order to get a menu.
