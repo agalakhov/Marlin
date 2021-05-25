@@ -166,6 +166,11 @@ namespace Creality {
     return { DWIN::NoIcon, nullptr, Action_Dummy{} };
   }
 
+  // Convenience helper for adding "Back" menu items
+  inline constexpr MenuItem MenuBack() {
+    return { DWIN::Icon::Back, "Back", Action_LeaveMenu{} };
+  }
+
   // Populate this struct as static constant in order to get a menu.
   struct Menu {
     const char * const title;
