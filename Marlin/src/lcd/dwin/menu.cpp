@@ -91,22 +91,26 @@ namespace Creality {
       case ENCODER_DIFF_CCW:
         if (rec.selection > 0) {
           rec.selection--;
+          this->Redraw();
         } else if (rec.scroll > 0) {
           rec.scroll--;
+          this->Redraw();
         }
         break;
       case ENCODER_DIFF_CW:
         if (rec.selection < 5) {
           rec.selection++;
+          this->Redraw();
         } else if (rec.scroll < 0) {
           rec.scroll++;
+          this->Redraw();
         }
         break;
       case ENCODER_DIFF_ENTER:
+        const auto& action = rec.menu->items[rec.selection].action;
+        this->Perform_Action(action);
         break;
     }
-
-    this->Redraw();
   }
 
   void MenuEngine::Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection) {
