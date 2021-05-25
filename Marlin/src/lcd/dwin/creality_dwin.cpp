@@ -550,7 +550,7 @@ void CrealityDWINClass::Draw_Main_Menu(uint8_t select/*=0*/) {
 }
 
 void CrealityDWINClass::Print_Screen_Icons() {
-  this->menuEngine.Draw_IconicMenu(std::get<Creality::MenuType_Icons>(Creality_printMenu.type), Creality_printMenu.items, selection);
+  this->menuEngine.Draw_IconicMenu(std::get<const Creality::MenuType_Icons>(Creality_printMenu.type), Creality_printMenu.items, selection);
 }
 
 void CrealityDWINClass::Draw_Print_Screen() {

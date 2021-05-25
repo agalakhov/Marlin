@@ -67,7 +67,7 @@ namespace Creality {
   // Predicate function wrapper. If false, menu item is not displayed.
   struct MenuItemPredicate {
     bool (* const condition)();
-    bool invert;
+    const bool invert;
   public:
     constexpr MenuItemPredicate()
       : condition(nullptr)
@@ -108,11 +108,11 @@ namespace Creality {
   };
 
   typedef variant<
-    Action_EnterMenu,
-    Action_LeaveMenu,
-    Action_Do,
-    Action_Edit,
-    Action_Dummy
+    const Action_EnterMenu,
+    const Action_LeaveMenu,
+    const Action_Do,
+    const Action_Edit,
+    const Action_Dummy
   > MenuAction;
 
   // Predicate: display menu item only if function returns true
@@ -131,15 +131,22 @@ namespace Creality {
     const char * const text;
     const MenuAction action;
     const MenuItemPredicate predicate;
+  private:
+    MenuItem(const MenuItem&) = delete;
+    MenuItem& operator= (const MenuItem&) = delete;
   };
 
   // Sentinel. Each menu MUST end with this one.
-  constexpr MenuItem EndMenu = { DWIN::NoIcon, nullptr, Action_Dummy{} };
+  //
+  // This is a function and not a constant to avoid calling copy constructor.
+  inline constexpr MenuItem EndMenu() {
+      return { DWIN::NoIcon, nullptr, Action_Dummy{} };
+  }
 
   // Populate this struct as static constant in order to get a menu.
   struct Menu {
     const char * const title;
-    const variant<MenuType_List, MenuType_Icons> type;
+    const variant<const MenuType_List, const MenuType_Icons> type;
     const MenuItem items[];
   };
 

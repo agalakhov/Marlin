@@ -51,8 +51,8 @@ namespace Creality {
   };
 
   struct Dimensions {
-    uint16_t w;
-    uint16_t h;
+    const uint16_t w;
+    const uint16_t h;
   public:
     constexpr Rectangle AtPoint(Point p) const {
       return { p, { static_cast<uint16_t>(p.x + w), static_cast<uint16_t>(p.y + h) } };
@@ -60,8 +60,8 @@ namespace Creality {
   };
 
   struct Grid {
-    Point origin;
-    Dimensions step;
+    const Point origin;
+    const Dimensions step;
   public:
     constexpr Point At(uint8_t col, uint8_t row) const {
       return { static_cast<uint16_t>(origin.x + step.w * col), static_cast<uint16_t>(origin.y + step.h * row) };

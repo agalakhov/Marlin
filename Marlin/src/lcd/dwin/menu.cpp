@@ -194,7 +194,7 @@ namespace Creality {
     if (icon != DWIN::NoIcon) {
       DWIN_ICON_Show(DWIN::ICON, icon, iconPos.x, iconPos.y);
     }
-    if (holds_alternative<Action_EnterMenu>(item.action)) {
+    if (holds_alternative<const Action_EnterMenu>(item.action)) {
       DWIN_ICON_Show(DWIN::ICON, DWIN::Icon::More, iconPos.x + Geometry::listItemRightIconOffset, iconPos.y);
     }
     const uint16_t lineY = pos.y + Geometry::listItemIconSize.h + Geometry::listItemPadding;
