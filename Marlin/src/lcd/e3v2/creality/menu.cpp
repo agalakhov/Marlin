@@ -115,7 +115,6 @@ namespace Creality {
     Point pos = type.grid.origin;
     for (const MenuItem * item = items; item->text != nullptr; ++item) {
       if (item->predicate()) {
-        ++idx;
         Draw_IconicItem(type, *item, pos, (idx == selection));
         ++column;
         if (column < type.columns) {
@@ -125,6 +124,7 @@ namespace Creality {
           pos.x = type.grid.origin.x;
           pos.y += type.grid.step.h;
         }
+        ++idx;
       }
     }
   }
@@ -160,9 +160,9 @@ namespace Creality {
     };
     for (const MenuItem * item = items; idx < 4 && item->text != nullptr; ++item) {
       if (item->predicate()) {
-        ++idx;
         Draw_ListItem(type, *item, pos, (idx == selection));
         pos.x += Geometry::listItemIconSize.h + 2 * Geometry::listItemPadding + 1;
+        ++idx;
       }
     }
   }
