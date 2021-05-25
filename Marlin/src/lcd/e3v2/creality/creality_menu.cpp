@@ -32,7 +32,9 @@
 using namespace Creality;
 using DWIN::Icon;
 
-const Creality::Menu Creality_mainMenu = {
+// Menu structures MUST land in .rodata section. Make sure they all are const constexpr.
+
+const constexpr Creality::Menu Creality_mainMenu = {
   "Main Menu",
   MenuType_Icons {
       Geometry::mainMenuItemSize,
@@ -48,7 +50,7 @@ const Creality::Menu Creality_mainMenu = {
     #else
       { { Icon::Info_0, Icon::Info_1}, "Info", Action_Do{ CrealityDWINClass::Tmp_InfoClicked } },
     #endif
-    Creality::EndMenu
+    Creality::EndMenu()
   }
 };
 
@@ -57,7 +59,7 @@ static bool Helper_IsPrinting() {
   return printing;
 }
 
-const Creality::Menu Creality_printMenu = {
+const constexpr Creality::Menu Creality_printMenu = {
   nullptr,
   Creality::MenuType_Icons {
       Geometry::printMenuItemSize,
@@ -69,41 +71,41 @@ const Creality::Menu Creality_printMenu = {
     { { Icon::Pause_0, Icon::Pause_1 }, "Pause", Action_Dummy{}, Only_If(Helper_IsPrinting) },
     { { Icon::Continue_0,  Icon::Continue_1}, "Print", Action_Dummy{}, Only_If_Not(Helper_IsPrinting) },
     { { Icon::Stop_0, Icon::Stop_1}, "Stop", Action_Dummy{} },
-    Creality::EndMenu
+    Creality::EndMenu()
   }
 };
 
-static const Creality::Menu moveMenu = {
+static const constexpr Creality::Menu moveMenu = {
   "Move",
   MenuType_List{},
   {
     { Icon::Back,         "Back",             Action_LeaveMenu{} },
     // TODO
-    EndMenu
+    EndMenu()
   }
 };
 
-static const Creality::Menu homeMenu = {
+static const constexpr Creality::Menu homeMenu = {
   "Homing Menu",
   MenuType_List{},
   {
     { Icon::Back,         "Back",             Action_LeaveMenu{} },
     // TODO
-    EndMenu
+    EndMenu()
   }
 };
 
-static const Creality::Menu preheatMenu = {
+static const constexpr Creality::Menu preheatMenu = {
   "Preheat",
   MenuType_List{},
   {
     { Icon::Back,         "Back",             Action_LeaveMenu{} },
     // TODO
-    EndMenu
+    EndMenu()
   }
 };
 
-static const Creality::Menu prepareMenu = {
+static const constexpr Creality::Menu prepareMenu = {
   "Prepare",
   MenuType_List{},
   {
@@ -169,6 +171,6 @@ static const Creality::Menu prepareMenu = {
       },
     #endif
 
-    EndMenu
+    EndMenu()
   }
 };
