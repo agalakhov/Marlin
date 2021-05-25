@@ -40,6 +40,12 @@ namespace Creality {
 
   void MenuEngine::EnterMenu(const Menu& menu) {
     if (this->stackPos < MAX_MENU_DEPTH) {
+      {
+        const auto& ty = std::get_if<const MenuType_List>(&menu.type);
+        if (ty) {
+          ty->on_enter();
+        }
+      }
       this->menuStack[this->stackPos++] = {
         .menu = &menu,
         .selection = 0,
@@ -51,6 +57,13 @@ namespace Creality {
 
   void MenuEngine::LeaveMenu() {
     if (this->stackPos > 0) {
+      {
+        const auto& rec = this->menuStack[this->stackPos - 1];
+        const auto* ty = std::get_if<const MenuType_List>(&rec.menu->type);
+        if (ty) {
+          ty->on_leave();
+        }
+      }
       this->stackPos--;
     }
     this->Redraw();
