@@ -168,7 +168,7 @@ namespace DWIN {
   constexpr Icon CUSTOM_ICON_START = Icon(200);
 
   enum class Font: uint8_t {
-    font5x12  = 0x00,
+    font6x12  = 0x00,
     font8x16  = 0x01,
     font10x20 = 0x02,
     font12x24 = 0x03,

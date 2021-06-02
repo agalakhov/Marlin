@@ -113,8 +113,8 @@ namespace Creality {
 
   constexpr Dimensions BaseGeometry::Font_CharSize(DWIN::Font font) {
     switch (font) {
-      case DWIN::Font::font5x12:
-        return { 5, 12 };
+      case DWIN::Font::font6x12:
+        return { 6, 12 };
       case DWIN::Font::font8x16:
         return { 8, 16 };
       case DWIN::Font::font10x20:
