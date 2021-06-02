@@ -196,6 +196,7 @@ namespace Creality {
   private:
     void Perform_Action(const MenuAction& action);
   public: // TODO private
+    static void Draw_Title(const char * title);
     static void Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection);
     static void Draw_ListMenu(const MenuType_List& type, const MenuItem items[], uint16_t selection);
   private:

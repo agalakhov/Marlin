@@ -457,11 +457,6 @@ uint16_t CrealityDWINClass::GetColor(uint8_t color, uint16_t original, bool ligh
   return Color_White;
 }
 
-void CrealityDWINClass::Draw_Title(const char * title) {
-  const auto p = Geometry::Text_Inscribe({ Geometry::screen.w, Geometry::titleHeight }, Geometry::titleFont, title);
-  DWIN_Draw_String(false, false, Geometry::titleFont, GetColor(eeprom_settings.menu_top_txt, Color_White, false), Color_Bg_Blue, p.x, p.y, title);
-}
-
 void CrealityDWINClass::Draw_Menu_Item(uint8_t row, Icon icon/*=0*/, const char * label1, const char * label2, bool more/*=false*/, bool centered/*=false*/) {
   const uint8_t label_offset_y = !(label1 && label2) ? 0 : MENU_CHR_H * 3 / 5;
   const uint8_t label1_offset_x = !centered ? LBLX : LBLX * 4/5 + max(LBLX * 1U/5, (Geometry::screen.w - LBLX - (label1 ? strlen(label1) : 0) * MENU_CHR_W) / 2);
@@ -502,7 +497,7 @@ void CrealityDWINClass::Draw_Menu(uint8_t menu, uint8_t select/*=0*/, uint8_t sc
   process = Menu;
   active_menu = menu;
   Clear_Screen();
-  Draw_Title(Get_Menu_Title(menu));
+  this->menuEngine.Draw_Title(Get_Menu_Title(menu));
   LOOP_L_N(i, TROWS) Menu_Item_Handler(menu, i + scrollpos);
   DWIN_Draw_Rectangle(1, GetColor(eeprom_settings.cursor_color, Rectangle_Color), 0, MBASE(selection-scrollpos) - 18, 14, MBASE(selection-scrollpos) + 33);
 }
@@ -539,7 +534,7 @@ void CrealityDWINClass::Draw_Main_Menu(uint8_t select/*=0*/) {
   active_menu = MainMenu;
   selection = select;
   Clear_Screen();
-  Draw_Title(Get_Menu_Title(MainMenu));
+  this->menuEngine.Draw_Title(Get_Menu_Title(MainMenu));
   this->menuEngine.LeaveMenu();
   this->menuEngine.EnterMenu(Creality_mainMenu);
 }
@@ -553,7 +548,7 @@ void CrealityDWINClass::Draw_Print_Screen() {
   selection = 0;
   Clear_Screen();
   DWIN_Draw_Rectangle(1, Color_Bg_Black, 8, 352, Geometry::screen.w-8, 376);
-  Draw_Title("Printing...");
+  this->menuEngine.Draw_Title("Printing...");
   Print_Screen_Icons();
   DWIN_ICON_Show(ICON, Icon::PrintTime, 14, 171);
   DWIN_ICON_Show(ICON, Icon::RemainTime, 147, 169);
@@ -679,7 +674,7 @@ void CrealityDWINClass::Draw_SD_Item(uint8_t item, uint8_t row) {
 
 void CrealityDWINClass::Draw_SD_List(bool removed/*=false*/) {
   Clear_Screen();
-  Draw_Title("Select File");
+  this->menuEngine.Draw_Title("Select File");
   selection = 0;
   scrollpos = 0;
   process = File;

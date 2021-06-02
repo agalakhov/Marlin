@@ -89,6 +89,7 @@ namespace Creality {
 
     if (this->stackPos > 0) {
       const auto& rec = this->menuStack[this->stackPos - 1];
+      Draw_Title(rec.menu->title);
       Draw d {
         rec.menu->items,
         rec.selection,
@@ -261,6 +262,12 @@ namespace Creality {
     constexpr uint16_t h = Geometry::listItemIconSize.h + 2 * Geometry::listItemPadding + 1;
     const uint16_t y = Geometry::titleHeight + selection * h;
     DWIN_Draw_Rectangle(1, color, 0, y + 1, Geometry::listItemCursorWidth, y + h - 1);
+  }
+
+  void MenuEngine::Draw_Title(const char * title) {
+    const auto p = Geometry::Text_Inscribe({ Geometry::screen.w, Geometry::titleHeight }, Geometry::titleFont, title);
+    const auto color = Color_White; // GetColor(eeprom_settings.menu_top_txt, Color_White, false)
+    DWIN_Draw_String(false, false, Geometry::titleFont, color, Color_Bg_Blue, p.x, p.y, title);
   }
 
 } // namespace Creality

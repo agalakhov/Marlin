@@ -129,13 +129,11 @@ public:
   void Draw_Option(uint8_t value, const char * const * options, uint8_t row, bool selected=false, bool color=false);
   uint16_t GetColor(uint8_t color, uint16_t original, bool light=false);
   void Draw_Checkbox(uint8_t row, bool value);
-  void Draw_Title(const char * title);
   void Draw_Menu_Item(uint8_t row, DWIN::Icon icon=DWIN::NoIcon, const char * const label1=NULL, const char * const label2=NULL, bool more=false, bool centered=false);
   void Draw_Menu(uint8_t menu, uint8_t select=0, uint8_t scroll=0);
   void Redraw_Menu(bool lastprocess=true, bool lastselection=false, bool lastmenu=false);
   void Redraw_Screen();
 
-  void Main_Menu_Icons();
   void Draw_Main_Menu(uint8_t select=0);
   void Print_Screen_Icons();
   void Draw_Print_Screen();
