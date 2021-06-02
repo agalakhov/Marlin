@@ -192,8 +192,10 @@ namespace Creality {
     static void Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection);
     static void Draw_ListMenu(const MenuType_List& type, const MenuItem items[], uint16_t selection);
   private:
+    void Redraw_Cursor(uint16_t oldSelection);
     static void Draw_IconicItem(const MenuType_Icons& type, const MenuItem& item, Point pos, bool selected);
     static void Draw_ListItem(const MenuType_List& type, const MenuItem& item, Point pos, bool selected);
+    static void Draw_ListCursor(uint16_t selection, bool visible);
   private:
     MenuEngine(const MenuEngine&) = delete;
     MenuEngine& operator= (const MenuEngine&) = delete;
