@@ -92,6 +92,32 @@ namespace Creality {
     }
   }
 
+  void MenuEngine::Redraw_Cursor(uint16_t oldSel) {
+    struct Draw {
+      const MenuItem * items;
+      uint16_t oldSelection;
+      uint16_t selection;
+    public:
+      void operator() (const MenuType_Icons& type) {
+        MenuEngine::Draw_IconicMenu(type, items, selection);
+      }
+      void operator() (const MenuType_List&) {
+        MenuEngine::Draw_ListCursor(oldSelection, false);
+        MenuEngine::Draw_ListCursor(selection, true);
+      }
+    };
+
+    if (this->stackPos > 0) {
+      const auto& rec = this->menuStack[this->stackPos - 1];
+      Draw d {
+        rec.menu->items,
+        oldSel,
+        rec.selection,
+      };
+      std::visit(d, rec.menu->type);
+    }
+  }
+
   void MenuEngine::Control() {
     if (this->stackPos == 0) {
       return;
@@ -103,8 +129,8 @@ namespace Creality {
         break;
       case ENCODER_DIFF_CCW:
         if (rec.selection > 0) {
-          rec.selection--;
-          this->Redraw();
+          auto oldSel = rec.selection--;
+          this->Redraw_Cursor(oldSel);
         } else if (rec.scroll > 0) {
           rec.scroll--;
           this->Redraw();
@@ -112,8 +138,8 @@ namespace Creality {
         break;
       case ENCODER_DIFF_CW:
         if (rec.selection < 5) {
-          rec.selection++;
-          this->Redraw();
+          auto oldSel = rec.selection++;
+          this->Redraw_Cursor(oldSel);
         } else if (rec.scroll < 0) {
           rec.scroll++;
           this->Redraw();
@@ -123,26 +149,6 @@ namespace Creality {
         const auto& action = rec.menu->items[rec.selection].action;
         this->Perform_Action(action);
         break;
-    }
-  }
-
-  void MenuEngine::Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection) {
-    uint8_t idx = 0;
-    uint8_t column = 0;
-    Point pos = type.grid.origin;
-    for (const MenuItem * item = items; item->text != nullptr; ++item) {
-      if (item->predicate()) {
-        Draw_IconicItem(type, *item, pos, (idx == selection));
-        ++column;
-        if (column < type.columns) {
-          pos.x += type.grid.step.w;
-        } else {
-          column = 0;
-          pos.x = type.grid.origin.x;
-          pos.y += type.grid.step.h;
-        }
-        ++idx;
-      }
     }
   }
 
@@ -167,6 +173,26 @@ namespace Creality {
     };
 
     std::visit(Actor { this }, action);
+  }
+
+  void MenuEngine::Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection) {
+    uint8_t idx = 0;
+    uint8_t column = 0;
+    Point pos = type.grid.origin;
+    for (const MenuItem * item = items; item->text != nullptr; ++item) {
+      if (item->predicate()) {
+        Draw_IconicItem(type, *item, pos, (idx == selection));
+        ++column;
+        if (column < type.columns) {
+          pos.x += type.grid.step.w;
+        } else {
+          column = 0;
+          pos.x = type.grid.origin.x;
+          pos.y += type.grid.step.h;
+        }
+        ++idx;
+      }
+    }
   }
 
   void MenuEngine::Draw_ListMenu(const MenuType_List& type, const MenuItem items[], uint16_t selection) {
@@ -216,6 +242,13 @@ namespace Creality {
     }
     const uint16_t lineY = pos.y + Geometry::listItemIconSize.h + Geometry::listItemPadding;
     DWIN_Draw_Line(lineColor, Geometry::listItemLineLeft, lineY, Geometry::listItemLineRight, lineY);
+  }
+
+  void MenuEngine::Draw_ListCursor(uint16_t selection, bool visible) {
+    const auto color = visible ? Rectangle_Color : Color_Bg_Black; // GetColor(eeprom_settings.cursor_color)
+    constexpr uint16_t h = Geometry::listItemIconSize.h + 2 * Geometry::listItemPadding + 1;
+    const uint16_t y = Geometry::titleHeight + selection * h;
+    DWIN_Draw_Rectangle(1, color, 0, y + 1, Geometry::listItemCursorWidth, y + h - 1);
   }
 
 } // namespace Creality
