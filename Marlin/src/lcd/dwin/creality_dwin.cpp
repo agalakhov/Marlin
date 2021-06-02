@@ -534,7 +534,6 @@ void CrealityDWINClass::Draw_Main_Menu(uint8_t select/*=0*/) {
   active_menu = MainMenu;
   selection = select;
   Clear_Screen();
-  this->menuEngine.Draw_Title(Get_Menu_Title(MainMenu));
   this->menuEngine.LeaveMenu();
   this->menuEngine.EnterMenu(Creality_mainMenu);
 }
