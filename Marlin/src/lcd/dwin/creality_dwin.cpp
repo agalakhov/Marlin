@@ -534,19 +534,14 @@ void CrealityDWINClass::Redraw_Screen() {
 
 /* Primary Menus and Screen Elements */
 
-void CrealityDWINClass::Main_Menu_Icons() {
-  this->menuEngine.LeaveMenu();
-  this->menuEngine.EnterMenu(Creality_mainMenu);
-}
-
 void CrealityDWINClass::Draw_Main_Menu(uint8_t select/*=0*/) {
   process = Main;
   active_menu = MainMenu;
   selection = select;
   Clear_Screen();
   Draw_Title(Get_Menu_Title(MainMenu));
-  DWIN_ICON_Show(ICON, Icon::LOGO, Geometry::logoPos.x, Geometry::logoPos.y);
-  Main_Menu_Icons();
+  this->menuEngine.LeaveMenu();
+  this->menuEngine.EnterMenu(Creality_mainMenu);
 }
 
 void CrealityDWINClass::Print_Screen_Icons() {

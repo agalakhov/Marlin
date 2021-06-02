@@ -172,7 +172,8 @@ const constexpr Creality::Menu Creality_mainMenu = {
   MenuType_Icons {
       Geometry::mainMenuItemSize,
       Geometry::mainMenuGrid,
-      2
+      2,
+      MenuOptions::WithLogo
   },
   {
     { { Icon::Print_0, Icon::Print_1 },         "Print",    Action_Do{ CrealityDWINClass::Tmp_PrintClicked }    },
@@ -197,7 +198,8 @@ const constexpr Creality::Menu Creality_printMenu = {
   Creality::MenuType_Icons {
       Geometry::printMenuItemSize,
       Geometry::printMenuGrid,
-      3
+      3,
+      MenuOptions::Simple
   },
   {
     { { Icon::Setup_0, Icon::Setup_1 },         "Tune",     Action_Dummy{} },

@@ -65,11 +65,18 @@ namespace Creality {
     const Func<void> on_leave;
   };
 
+  // Options for iconic menu
+  enum class MenuOptions : uint8_t {
+    Simple = 0,
+    WithLogo,
+  };
+
   // Menu type tag struct: icons
   struct MenuType_Icons {
     const Dimensions size;
     const Grid grid;
     const uint8_t columns;
+    const MenuOptions options;
   };
 
   // One or two icons for a menu item

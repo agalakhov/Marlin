@@ -183,6 +183,10 @@ namespace Creality {
   }
 
   void MenuEngine::Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection) {
+    if (type.options == MenuOptions::WithLogo) {
+      DWIN_ICON_Show(DWIN::ICON, DWIN::Icon::LOGO, Geometry::logoPos.x, Geometry::logoPos.y);
+    }
+
     uint8_t idx = 0;
     uint8_t column = 0;
     Point pos = type.grid.origin;
