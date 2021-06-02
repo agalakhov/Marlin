@@ -53,6 +53,7 @@ namespace Creality {
       };
     }
     this->Redraw();
+    DWIN_UpdateLCD();
   }
 
   void MenuEngine::LeaveMenu() {
@@ -67,9 +68,13 @@ namespace Creality {
       this->stackPos--;
     }
     this->Redraw();
+    DWIN_UpdateLCD();
   }
 
   void MenuEngine::Redraw() {
+    // FIXME
+    DWIN_Draw_Rectangle(1, Color_Bg_Black, 0, 31, Geometry::screen.w, 352); // Clear Menu Area
+
     struct Draw {
       const MenuItem * items;
       uint16_t selection;
@@ -135,6 +140,7 @@ namespace Creality {
           rec.scroll--;
           this->Redraw();
         }
+        DWIN_UpdateLCD();
         break;
       case ENCODER_DIFF_CW:
         if (rec.selection < 5) {
@@ -144,6 +150,7 @@ namespace Creality {
           rec.scroll++;
           this->Redraw();
         }
+        DWIN_UpdateLCD();
         break;
       case ENCODER_DIFF_ENTER:
         const auto& action = rec.menu->items[rec.selection].action;
@@ -204,10 +211,11 @@ namespace Creality {
     for (const MenuItem * item = items; idx < 4 && item->text != nullptr; ++item) {
       if (item->predicate()) {
         Draw_ListItem(type, *item, pos, (idx == selection));
-        pos.x += Geometry::listItemIconSize.h + 2 * Geometry::listItemPadding + 1;
+        pos.y += Geometry::listItemIconSize.h + 2 * Geometry::listItemPadding + 1;
         ++idx;
       }
     }
+    Draw_ListCursor(selection, true);
   }
 
   void MenuEngine::Draw_IconicItem(const MenuType_Icons& type, const MenuItem& item, Point pos, bool selected) {

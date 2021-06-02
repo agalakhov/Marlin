@@ -40,4 +40,8 @@ public:
   }
   static void DisableLeveling();
   static void ReEnableLeveling();
+
+  static void LoadFilament();
+  static void UnloadFilament();
+  static void ChangeFilament();
 };

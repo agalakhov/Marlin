@@ -4852,7 +4852,6 @@ void CrealityDWINClass::Confirm_Handler(PopupID popupid) {
 
 void CrealityDWINClass::Main_Menu_Control() {
   this->menuEngine.Control();
-  DWIN_UpdateLCD();
 }
 
 void CrealityDWINClass::Tmp_PrintClicked() {
