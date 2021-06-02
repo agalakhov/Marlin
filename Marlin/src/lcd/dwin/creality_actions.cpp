@@ -57,3 +57,15 @@ void CrealityActions::DisableLeveling() {
 void CrealityActions::ReEnableLeveling() {
     // TODO
 }
+
+void CrealityActions::LoadFilament() {
+    // TODO
+}
+
+void CrealityActions::UnloadFilament() {
+    // TODO
+}
+
+void CrealityActions::ChangeFilament() {
+    // TODO
+}

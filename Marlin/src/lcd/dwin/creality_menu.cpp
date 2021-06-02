@@ -108,6 +108,18 @@ static const constexpr Creality::Menu preheatMenu = {
   }
 };
 
+static const constexpr Creality::Menu changeFilamentMenu = {
+    "Change Filament",
+    MenuType_List{},
+    {
+        MenuBack(),
+        { Icon::WriteEEPROM,    "Load Filament",    Action_Do{CrealityActions::LoadFilament} },
+        { Icon::ReadEEPROM,     "Unload Filament",  Action_Do{CrealityActions::UnloadFilament} },
+        { Icon::ResumeEEPROM,   "Change Filament",  Action_Do{CrealityActions::ChangeFilament} },
+        EndMenu()
+    }
+};
+
 static const constexpr Creality::Menu prepareMenu = {
   "Prepare",
   MenuType_List{},
