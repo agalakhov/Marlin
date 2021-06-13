@@ -38,7 +38,7 @@ enum processID : uint8_t {
 };
 
 enum PopupID : uint8_t {
-  Pause, Stop, Resume, SaveLevel, ETemp, ConfFilChange, PurgeMore,
+  Pause, Stop, Resume, SaveLevel, ETemp, ConfFilChange, PurgeMore, MeshSlot,
   Level, Home, MoveWait, Heating,  FilLoad, FilChange, TempWarn, Runout, PIDWait, Resuming,
   FilInsert, HeaterTime, UserInput, LevelError, InvalidMesh, UI, Complete
 };
@@ -89,7 +89,6 @@ enum menuID : uint8_t {
 #define Start_Process       0
 #define Language_English    1
 #define Language_Chinese    2
-
 
 enum colorID : uint8_t {
   Default, White, Green, Cyan, Blue, Magenta, Red, Orange, Yellow, Brown, Black
