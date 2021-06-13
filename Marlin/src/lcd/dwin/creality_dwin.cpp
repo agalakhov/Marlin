@@ -3274,7 +3274,7 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
           #if ENABLED(AUTO_BED_LEVELING_UBL)
           case LEVELING_SLOT:
             if (draw) {
-              Draw_Menu_Item(row, ICON_PrintSize, "Mesh Slot");
+              Draw_Menu_Item(row, Icon::PrintSize, "Mesh Slot");
               Draw_Float(ubl.storage_slot, row, false, 1);
             }
             else {
