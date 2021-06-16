@@ -31,12 +31,18 @@
 #include "creality_dwin.h"
 #include "../../../inc/MarlinConfigPre.h"
 
+#include "../../../module/planner.h"
+
 using namespace Creality;
 using DWIN::Icon;
 
 // Menu structures MUST land in .rodata section. Make sure they all are const constexpr.
 
-static const constexpr Creality::Menu moveMenu = {
+static const constexpr Creality::EditableNumber<float> curPosX { &current_position.x, X_MIN_POS, X_MAX_POS, 10 };
+static const constexpr Creality::EditableNumber<float> curPosY { &current_position.y, X_MIN_POS, X_MAX_POS, 10 };
+static const constexpr Creality::EditableNumber<float> curPosZ { &current_position.z, X_MIN_POS, X_MAX_POS, 10 };
+
+static const constexpr Creality::Menu moveMenu {
   "Move",
   MenuType_List{
     .on_enter = nullptr,
@@ -44,9 +50,9 @@ static const constexpr Creality::Menu moveMenu = {
   },
   {
     MenuBack(),
-//TODO    { Icon::MoveX,  "Move X",   Action_Value{current_position.x, X_MIN_POS, X_MAX_POS, 10} },
-//TODO    { Icon::MoveY,  "Move Y",   Action_Value{current_position.y, Y_MIN_POS, Y_MAX_POS, 10} },
-//TODO    { Icon::MoveZ,  "Move Z",   Action_Value{current_position.z, Z_MIN_POS, Z_MAX_POS, 10} },
+    { Icon::MoveX,  "Move X",   Action_Value{&curPosX} },
+    { Icon::MoveY,  "Move Y",   Action_Value{&curPosY} },
+    { Icon::MoveZ,  "Move Z",   Action_Value{&curPosZ} },
     #if HAS_HOTEND
 // TODO      { Icon::Extruder, "Extruder", Action_Value
     #endif
@@ -58,7 +64,7 @@ static const constexpr Creality::Menu moveMenu = {
   }
 };
 
-static const constexpr Creality::Menu homeMenu = {
+static const constexpr Creality::Menu homeMenu {
   "Homing Menu",
   MenuType_List{},
   {
@@ -72,7 +78,7 @@ static const constexpr Creality::Menu homeMenu = {
   }
 };
 
-static const constexpr Creality::Menu manualLevelingMenu = {
+static const constexpr Creality::Menu manualLevelingMenu {
   "Manual Leveling",
   MenuType_List {
     .on_enter = CrealityActions::HomeAndDisableLeveling,
@@ -85,7 +91,7 @@ static const constexpr Creality::Menu manualLevelingMenu = {
   }
 };
 
-static const constexpr Creality::Menu zOffsetMenu = {
+static const constexpr Creality::Menu zOffsetMenu {
   "Z Offset",
   MenuType_List {
       .on_enter = CrealityActions::DisableLeveling,
@@ -108,7 +114,7 @@ static const constexpr Creality::Menu preheatMenu = {
   }
 };
 
-static const constexpr Creality::Menu changeFilamentMenu = {
+static const constexpr Creality::Menu changeFilamentMenu {
     "Change Filament",
     MenuType_List{},
     {
@@ -120,7 +126,7 @@ static const constexpr Creality::Menu changeFilamentMenu = {
     }
 };
 
-static const constexpr Creality::Menu prepareMenu = {
+static const constexpr Creality::Menu prepareMenu {
   "Prepare",
   MenuType_List{},
   {
@@ -167,7 +173,7 @@ static const constexpr Creality::Menu prepareMenu = {
   }
 };
 
-const constexpr Creality::Menu Creality_mainMenu = {
+const constexpr Creality::Menu Creality_mainMenu {
   "Main Menu",
   MenuType_Icons {
       Geometry::mainMenuItemSize,
@@ -193,7 +199,7 @@ static bool Helper_IsPrinting() {
   return printing;
 }
 
-const constexpr Creality::Menu Creality_printMenu = {
+const constexpr Creality::Menu Creality_printMenu {
   nullptr,
   Creality::MenuType_Icons {
       Geometry::printMenuItemSize,

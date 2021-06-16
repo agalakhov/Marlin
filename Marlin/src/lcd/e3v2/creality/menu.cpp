@@ -173,7 +173,7 @@ namespace Creality {
       void operator() (const Action_Do& func) {
         func.function();
       }
-      void operator() (const Action_Edit& edit) {
+      void operator() (const Action_Value& edit) {
         // TODO
       }
       void operator() (const Action_Dummy&) {

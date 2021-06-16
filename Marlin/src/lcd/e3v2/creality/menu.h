@@ -114,6 +114,47 @@ namespace Creality {
 
   struct Menu;
 
+  // Editable item
+  class EditableItem {
+    public:
+      virtual void Draw(Point position) const = 0;
+      virtual void Enter() { }
+      virtual void Step(bool sign) = 0;
+      virtual void Done() { }
+    protected:
+      constexpr EditableItem() { }
+    private:
+      EditableItem(const EditableItem&) = delete;
+      EditableItem& operator= (const EditableItem&) = delete;
+  };
+
+  // Just editable number
+  template <typename T>
+  struct EditableNumber : public EditableItem {
+    T * const value;
+    const T min;
+    const T max;
+    const T step;
+  public:
+    constexpr EditableNumber(T * _value, T _min, T _max, T _step)
+      : value(_value), min(_min), max(_max), step(_step)
+    { }
+    virtual void Draw(Point position) const;
+    virtual void Step(bool sign);
+  };
+
+  // Editable boolean value
+  struct EditableBool : public EditableItem {
+    bool * const value;
+  public:
+    constexpr EditableBool(bool * _value)
+      : value(_value)
+    { }
+    virtual void Draw(Point position) const;
+    virtual void Enter();
+    virtual void Step(bool) { }
+  };
+
   // Menu item action: Enter submenu
   struct Action_EnterMenu {
     const Menu& menu;
@@ -129,8 +170,8 @@ namespace Creality {
   };
 
   // Menu item action: edit a variable
-  struct Action_Edit {
-    // TODO
+  struct Action_Value {
+    const EditableItem * const editable;
   };
 
   // Menu item action: function does not exist
@@ -141,7 +182,7 @@ namespace Creality {
     const Action_EnterMenu,
     const Action_LeaveMenu,
     const Action_Do,
-    const Action_Edit,
+    const Action_Value,
     const Action_Dummy
   > MenuAction;
 
