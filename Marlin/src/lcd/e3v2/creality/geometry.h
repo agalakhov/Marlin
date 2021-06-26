@@ -105,6 +105,7 @@ namespace Creality {
     static constexpr Point printElapsedTimePos = { 42, 187 };
     static constexpr Point printRemainingTimePos = { 176, 187 };
     static constexpr uint16_t listItemRightIconOffset = 200;
+    static constexpr uint16_t listItemValueOffset = 200;
     static constexpr uint16_t listItemLineLeft = listItemCursorWidth + listItemLeftMargin;
     static constexpr uint16_t listItemLineRight = screen.w - listItemLineLeft;
   };

@@ -30,9 +30,28 @@
 #include "dwin.h"
 #include "rotary_encoder.h"
 
+#include <cmath>
+
 using std::holds_alternative;
 
 namespace Creality {
+
+  template <>
+  void EditableNumber<float>::Draw(Point pos, bool selected) const {
+    const auto font = Geometry::menuFont;
+    const auto fColor = Color_White;
+    const auto bColor = (selected) ? Select_Color : Color_Bg_Black;
+    if (isnan(*this->value)) {
+      DWIN_Draw_String(false, true, font, Color_White, bColor, pos.x, pos.y, " NaN");
+    } else {
+      const uint8_t fracdigits = -log10(this->step);
+      const uint8_t intdigits = 5 - fracdigits;
+      const auto w = Geometry::Font_CharSize(font).w;
+      const uint16_t val = round(fabs(*this->value) / this->step);
+      DWIN_Draw_String(false, true, font, fColor, bColor, pos.x, pos.y, (value < 0) ? "-" : ":");
+      DWIN_Draw_FloatValue(true, true, 0, font, fColor, bColor, intdigits, fracdigits, pos.x + w, pos.y, val);
+    }
+  }
 
   MenuEngine::MenuEngine()
     : stackPos(0)
@@ -41,7 +60,7 @@ namespace Creality {
   void MenuEngine::EnterMenu(const Menu& menu) {
     if (this->stackPos < MAX_MENU_DEPTH) {
       {
-        const auto& ty = std::get_if<const MenuType_List>(&menu.type);
+        const auto* const ty = std::get_if<const MenuType_List>(&menu.type);
         if (ty) {
           ty->on_enter();
         }
@@ -60,7 +79,7 @@ namespace Creality {
     if (this->stackPos > 0) {
       {
         const auto& rec = this->menuStack[this->stackPos - 1];
-        const auto* ty = std::get_if<const MenuType_List>(&rec.menu->type);
+        const auto* const ty = std::get_if<const MenuType_List>(&rec.menu->type);
         if (ty) {
           ty->on_leave();
         }
@@ -252,6 +271,16 @@ namespace Creality {
     }
     if (holds_alternative<const Action_EnterMenu>(item.action)) {
       DWIN_ICON_Show(DWIN::ICON, DWIN::Icon::More, iconPos.x + Geometry::listItemRightIconOffset, iconPos.y);
+    }
+    {
+      const auto* const editable = std::get_if<const Action_Value>(&item.action);
+      if (editable) {
+        const Point editablePos = {
+          static_cast<uint16_t>(textPos.x - Geometry::listItemTextOffset + Geometry::listItemValueOffset),
+          textPos.y
+        };
+        editable->editable->Draw(editablePos, false);
+      }
     }
     const uint16_t lineY = pos.y + Geometry::listItemIconSize.h + Geometry::listItemPadding;
     DWIN_Draw_Line(lineColor, Geometry::listItemLineLeft, lineY, Geometry::listItemLineRight, lineY);

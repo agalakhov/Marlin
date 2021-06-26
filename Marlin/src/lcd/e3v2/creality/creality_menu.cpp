@@ -38,9 +38,9 @@ using DWIN::Icon;
 
 // Menu structures MUST land in .rodata section. Make sure they all are const constexpr.
 
-static const constexpr Creality::EditableNumber<float> curPosX { &current_position.x, X_MIN_POS, X_MAX_POS, 10 };
-static const constexpr Creality::EditableNumber<float> curPosY { &current_position.y, X_MIN_POS, X_MAX_POS, 10 };
-static const constexpr Creality::EditableNumber<float> curPosZ { &current_position.z, X_MIN_POS, X_MAX_POS, 10 };
+static const constexpr Creality::EditableNumber<float> curPosX { &current_position.x, X_MIN_POS, X_MAX_POS, 0.1 };
+static const constexpr Creality::EditableNumber<float> curPosY { &current_position.y, X_MIN_POS, X_MAX_POS, 0.1 };
+static const constexpr Creality::EditableNumber<float> curPosZ { &current_position.z, X_MIN_POS, X_MAX_POS, 0.1 };
 
 static const constexpr Creality::Menu moveMenu {
   "Move",

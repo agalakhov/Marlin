@@ -117,7 +117,7 @@ namespace Creality {
   // Editable item
   class EditableItem {
     public:
-      virtual void Draw(Point position) const = 0;
+      virtual void Draw(Point position, bool selected) const = 0;
       virtual void Enter() { }
       virtual void Step(bool sign) = 0;
       virtual void Done() { }
@@ -139,7 +139,7 @@ namespace Creality {
     constexpr EditableNumber(T * _value, T _min, T _max, T _step)
       : value(_value), min(_min), max(_max), step(_step)
     { }
-    virtual void Draw(Point position) const;
+    virtual void Draw(Point position, bool selected) const;
     virtual void Step(bool sign);
   };
 
@@ -150,7 +150,7 @@ namespace Creality {
     constexpr EditableBool(bool * _value)
       : value(_value)
     { }
-    virtual void Draw(Point position) const;
+    virtual void Draw(Point position, bool selected) const;
     virtual void Enter();
     virtual void Step(bool) { }
   };
