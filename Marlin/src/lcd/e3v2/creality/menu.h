@@ -118,9 +118,9 @@ namespace Creality {
   class EditableItem {
     public:
       virtual void Draw(Point position, bool selected) const = 0;
-      virtual void Enter() { }
-      virtual void Step(bool sign) = 0;
-      virtual void Done() { }
+      virtual bool Enter() const { return true; }
+      virtual void Step(bool sign) const = 0;
+      virtual void Done() const { }
     protected:
       constexpr EditableItem() { }
     private:
@@ -140,7 +140,7 @@ namespace Creality {
       : value(_value), min(_min), max(_max), step(_step)
     { }
     virtual void Draw(Point position, bool selected) const;
-    virtual void Step(bool sign);
+    virtual void Step(bool sign) const;
   };
 
   // Editable boolean value
@@ -151,8 +151,8 @@ namespace Creality {
       : value(_value)
     { }
     virtual void Draw(Point position, bool selected) const;
-    virtual void Enter();
-    virtual void Step(bool) { }
+    virtual bool Enter() const;
+    virtual void Step(bool) const { /* unreachable */ }
   };
 
   // Menu item action: Enter submenu
@@ -228,6 +228,11 @@ namespace Creality {
 
   // The menu engine class. This handles all the menus.
   class MenuEngine {
+    struct StackRec {
+      const Menu * menu;
+      uint8_t selection; // relative to the scroll position
+      uint16_t scroll;
+    };
   public:
     MenuEngine();
     void EnterMenu(const Menu& menu);
@@ -235,6 +240,8 @@ namespace Creality {
     void Redraw();
     void Control();
   private:
+    void Control_Edit(const EditableItem& edit);
+    void Control_Navigate(StackRec& rec);
     void Perform_Action(const MenuAction& action);
   public: // TODO private
     static void Draw_Title(const char * title);
@@ -249,13 +256,9 @@ namespace Creality {
     MenuEngine(const MenuEngine&) = delete;
     MenuEngine& operator= (const MenuEngine&) = delete;
   private:
-    struct StackRec {
-      const Menu * menu;
-      uint8_t selection; // relative to the scroll position
-      uint16_t scroll;
-    };
     static constexpr uint8_t MAX_MENU_DEPTH = 8;
     uint8_t stackPos;
+    bool isEditing;
     StackRec menuStack[MAX_MENU_DEPTH];
   };
 

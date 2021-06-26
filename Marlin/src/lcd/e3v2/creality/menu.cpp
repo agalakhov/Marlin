@@ -55,6 +55,7 @@ namespace Creality {
 
   MenuEngine::MenuEngine()
     : stackPos(0)
+    , isEditing(false)
   { }
 
   void MenuEngine::EnterMenu(const Menu& menu) {
@@ -149,6 +150,41 @@ namespace Creality {
     }
     auto& rec = this->menuStack[this->stackPos - 1];
 
+    if (this->isEditing) {
+      const auto* const edit = std::get_if<const Action_Value>(&rec.menu->items[rec.selection].action);
+      if (edit) {
+        this->Control_Edit(*edit->editable);
+      } else {
+        // This should not happen, but just to be safe...
+        this->isEditing = false;
+      }
+    }
+
+    this->Control_Navigate(rec);
+  }
+
+  void MenuEngine::Control_Edit(const EditableItem& edit) {
+    switch (Encoder_ReceiveAnalyze()) {
+      case ENCODER_DIFF_NO:
+        break;
+      case ENCODER_DIFF_CCW:
+        edit.Step(true);
+        // TODO redraw
+        DWIN_UpdateLCD();
+        break;
+      case ENCODER_DIFF_CW:
+        edit.Step(false);
+        // TODO redraw
+        DWIN_UpdateLCD();
+        break;
+      case ENCODER_DIFF_ENTER:
+        edit.Done();
+        this->isEditing = false;
+        break;
+    }
+  }
+
+  void MenuEngine::Control_Navigate(StackRec& rec) {
     switch (Encoder_ReceiveAnalyze()) {
       case ENCODER_DIFF_NO:
         break;
@@ -163,7 +199,7 @@ namespace Creality {
         DWIN_UpdateLCD();
         break;
       case ENCODER_DIFF_CW:
-        if (rec.selection < 5) {
+        if (rec.selection < 5) { // FIXME
           auto oldSel = rec.selection++;
           this->Redraw_Cursor(oldSel);
         } else if (rec.scroll < 0) {
@@ -193,7 +229,9 @@ namespace Creality {
         func.function();
       }
       void operator() (const Action_Value& edit) {
-        // TODO
+        self->isEditing = edit.editable->Enter();
+        // TODO redraw
+        DWIN_UpdateLCD();
       }
       void operator() (const Action_Dummy&) {
       }
@@ -273,13 +311,13 @@ namespace Creality {
       DWIN_ICON_Show(DWIN::ICON, DWIN::Icon::More, iconPos.x + Geometry::listItemRightIconOffset, iconPos.y);
     }
     {
-      const auto* const editable = std::get_if<const Action_Value>(&item.action);
-      if (editable) {
+      const auto* const value = std::get_if<const Action_Value>(&item.action);
+      if (value) {
         const Point editablePos = {
           static_cast<uint16_t>(textPos.x - Geometry::listItemTextOffset + Geometry::listItemValueOffset),
           textPos.y
         };
-        editable->editable->Draw(editablePos, false);
+        value->editable->Draw(editablePos, false);
       }
     }
     const uint16_t lineY = pos.y + Geometry::listItemIconSize.h + Geometry::listItemPadding;
