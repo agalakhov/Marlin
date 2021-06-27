@@ -99,11 +99,11 @@ namespace Creality {
       const MenuItem * items;
       uint16_t selection;
     public:
-      void operator() (const MenuType_Icons& type) const {
-        return MenuEngine::Draw_IconicMenu(type, items, selection);
+      uint8_t operator() (const MenuType_List& type) const {
+        return MenuEngine::Draw_Menu(type, items, selection);
       }
-      void operator() (const MenuType_List& type) const {
-        return MenuEngine::Draw_ListMenu(type, items, selection);
+      uint8_t operator() (const MenuType_Icons& type) const {
+        return MenuEngine::Draw_Menu(type, items, selection);
       }
     };
 
@@ -111,10 +111,10 @@ namespace Creality {
       const auto& rec = this->menuStack[this->stackPos - 1];
       Draw_Title(rec.menu->title);
       Draw d {
-        rec.menu->items,
+        rec.firstVisible(),
         rec.selection,
       };
-      std::visit(d, rec.menu->type);
+      this->maxItemsOnScreen = std::visit(d, rec.menu->type);
     }
   }
 
@@ -125,7 +125,7 @@ namespace Creality {
       uint16_t selection;
     public:
       void operator() (const MenuType_Icons& type) {
-        MenuEngine::Draw_IconicMenu(type, items, selection);
+        MenuEngine::Draw_Menu(type, items, selection);
       }
       void operator() (const MenuType_List&) {
         MenuEngine::Draw_ListCursor(oldSelection, false);
@@ -136,7 +136,7 @@ namespace Creality {
     if (this->stackPos > 0) {
       const auto& rec = this->menuStack[this->stackPos - 1];
       Draw d {
-        rec.menu->items,
+        rec.firstVisible(),
         oldSel,
         rec.selection,
       };
@@ -243,7 +243,7 @@ namespace Creality {
     std::visit(Actor { this }, action);
   }
 
-  void MenuEngine::Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection) {
+  uint8_t MenuEngine::Draw_Menu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection) {
     if (type.options == MenuOptions::WithLogo) {
       DWIN_ICON_Show(DWIN::ICON, DWIN::Icon::LOGO, Geometry::logoPos.x, Geometry::logoPos.y);
     }
@@ -265,15 +265,16 @@ namespace Creality {
         ++idx;
       }
     }
+    return idx;
   }
 
-  void MenuEngine::Draw_ListMenu(const MenuType_List& type, const MenuItem items[], uint16_t selection) {
+  uint8_t MenuEngine::Draw_Menu(const MenuType_List& type, const MenuItem items[], uint16_t selection) {
     uint8_t idx = 0;
     Point pos = {
       Geometry::listItemCursorWidth + Geometry::listItemLeftMargin + Geometry::listItemLeftPadding,
       Geometry::titleHeight + Geometry::listItemPadding
     };
-    for (const MenuItem * item = items; idx < 4 && item->text != nullptr; ++item) {
+    for (const MenuItem * item = items; idx < Geometry::maxMenuLines && item->text != nullptr; ++item) {
       if (item->predicate()) {
         Draw_ListItem(type, *item, pos, (idx == selection));
         pos.y += Geometry::listItemIconSize.h + 2 * Geometry::listItemPadding + 1;
@@ -281,6 +282,7 @@ namespace Creality {
       }
     }
     Draw_ListCursor(selection, true);
+    return idx;
   }
 
   void MenuEngine::Draw_IconicItem(const MenuType_Icons& type, const MenuItem& item, Point pos, bool selected) {

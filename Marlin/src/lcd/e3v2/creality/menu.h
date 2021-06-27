@@ -237,6 +237,7 @@ namespace Creality {
       uint8_t selection; // relative to the scroll position
     public:
       uint16_t current() const { return this->selection + this->scroll; }
+      const MenuItem * firstVisible() const { return this->menu->items + this->scroll; }
     };
   public:
     MenuEngine();
@@ -250,8 +251,9 @@ namespace Creality {
     void Perform_Action(const MenuAction& action);
   public: // TODO private
     static void Draw_Title(const char * title);
-    static void Draw_IconicMenu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection);
-    static void Draw_ListMenu(const MenuType_List& type, const MenuItem items[], uint16_t selection);
+    // returns number of items drawn
+    static uint8_t Draw_Menu(const MenuType_Icons& type, const MenuItem items[], uint16_t selection);
+    static uint8_t Draw_Menu(const MenuType_List& type, const MenuItem items[], uint16_t selection);
   private:
     void Redraw_Cursor(uint16_t oldSelection);
     static void Draw_IconicItem(const MenuType_Icons& type, const MenuItem& item, Point pos, bool selected);
@@ -262,6 +264,7 @@ namespace Creality {
     MenuEngine& operator= (const MenuEngine&) = delete;
   private:
     static constexpr uint8_t MAX_MENU_DEPTH = 8;
+    uint8_t maxItemsOnScreen; // updated on each redraw
     uint8_t stackPos;
     bool isEditing;
     StackRec menuStack[MAX_MENU_DEPTH];
