@@ -108,6 +108,7 @@ namespace Creality {
     static constexpr uint16_t listItemValueOffset = 200;
     static constexpr uint16_t listItemLineLeft = listItemCursorWidth + listItemLeftMargin;
     static constexpr uint16_t listItemLineRight = screen.w - listItemLineLeft;
+    static constexpr uint8_t maxMenuLines = 9;
   };
 
   // These functions must be defined in header file since they all are constexpr.

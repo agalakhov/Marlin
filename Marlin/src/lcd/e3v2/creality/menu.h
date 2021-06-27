@@ -224,14 +224,19 @@ namespace Creality {
     const char * const title;
     const variant<const MenuType_List, const MenuType_Icons> type;
     const MenuItem items[];
+  public:
+    bool isSentinel(uint16_t index) const { return this->items[index].text == nullptr; }
+    bool isLast(uint16_t index) const { return this->isSentinel(index + 1); }
   };
 
   // The menu engine class. This handles all the menus.
   class MenuEngine {
     struct StackRec {
       const Menu * menu;
-      uint8_t selection; // relative to the scroll position
       uint16_t scroll;
+      uint8_t selection; // relative to the scroll position
+    public:
+      uint16_t current() const { return this->selection + this->scroll; }
     };
   public:
     MenuEngine();

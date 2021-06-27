@@ -68,8 +68,8 @@ namespace Creality {
       }
       this->menuStack[this->stackPos++] = {
         .menu = &menu,
-        .selection = 0,
         .scroll = 0,
+        .selection = 0,
       };
     }
     this->Redraw();
@@ -151,7 +151,7 @@ namespace Creality {
     auto& rec = this->menuStack[this->stackPos - 1];
 
     if (this->isEditing) {
-      const auto* const edit = std::get_if<const Action_Value>(&rec.menu->items[rec.selection].action);
+      const auto* const edit = std::get_if<const Action_Value>(&rec.menu->items[rec.current()].action);
       if (edit) {
         this->Control_Edit(*edit->editable);
       } else {
@@ -192,24 +192,27 @@ namespace Creality {
         if (rec.selection > 0) {
           auto oldSel = rec.selection--;
           this->Redraw_Cursor(oldSel);
+          DWIN_UpdateLCD();
         } else if (rec.scroll > 0) {
           rec.scroll--;
           this->Redraw();
+          DWIN_UpdateLCD();
         }
-        DWIN_UpdateLCD();
         break;
       case ENCODER_DIFF_CW:
-        if (rec.selection < 5) { // FIXME
-          auto oldSel = rec.selection++;
-          this->Redraw_Cursor(oldSel);
-        } else if (rec.scroll < 0) {
-          rec.scroll++;
-          this->Redraw();
+        if (! rec.menu->isLast(rec.current())) {
+          if (rec.selection < 5) { // FIXME
+            auto oldSel = rec.selection++;
+            this->Redraw_Cursor(oldSel);
+          } else { 
+            rec.scroll++;
+            this->Redraw();
+          }
+          DWIN_UpdateLCD();
         }
-        DWIN_UpdateLCD();
         break;
       case ENCODER_DIFF_ENTER:
-        const auto& action = rec.menu->items[rec.selection].action;
+        const auto& action = rec.menu->items[rec.current()].action;
         this->Perform_Action(action);
         break;
     }
