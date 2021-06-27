@@ -236,6 +236,12 @@ namespace Creality {
         // TODO redraw
         DWIN_UpdateLCD();
       }
+      void operator() (const Action_GCode_Queue& cmd) {
+        // TODO
+      }
+      void operator() (const Action_GCode_Sync& cmd) {
+        // TODO
+      }
       void operator() (const Action_Dummy&) {
       }
     };

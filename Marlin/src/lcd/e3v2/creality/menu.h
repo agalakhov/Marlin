@@ -174,6 +174,17 @@ namespace Creality {
     const EditableItem * const editable;
   };
 
+  // Menu item action: queue G-code
+  struct Action_GCode_Queue {
+    const char * const gcode;
+  };
+
+  // Menu item action: execute synchronous G-Code
+  struct Action_GCode_Sync {
+    PopupID popup;
+    const char * const gcode;
+  };
+
   // Menu item action: function does not exist
   struct Action_Dummy {
   };
@@ -183,6 +194,8 @@ namespace Creality {
     const Action_LeaveMenu,
     const Action_Do,
     const Action_Value,
+    const Action_GCode_Queue,
+    const Action_GCode_Sync,
     const Action_Dummy
   > MenuAction;
 

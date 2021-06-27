@@ -50,14 +50,6 @@ void CrealityActions::HomeIfNeeded() {
     // TODO
 }
 
-void CrealityActions::DisableLeveling() {
-    // TODO
-}
-
-void CrealityActions::ReEnableLeveling() {
-    // TODO
-}
-
 void CrealityActions::LoadFilament() {
     // TODO
 }
@@ -68,4 +60,19 @@ void CrealityActions::UnloadFilament() {
 
 void CrealityActions::ChangeFilament() {
     // TODO
+}
+
+namespace Creality {
+  void LevelingDisabler::Disable() {
+    #if HAS_LEVELING
+      levelingWasEnabled = planner.leveling_active;
+      set_bed_leveling_enabled(false);
+    #endif
+  }
+
+  void LevelingDisabler::ReEnable() {
+    #if HAS_LEVELING
+      set_bed_leveling_enabled(levelingWasEnabled);
+    #endif
+  }
 }

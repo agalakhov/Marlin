@@ -27,6 +27,32 @@
  * Refactor by Alexey Galakhov
  */
 
+namespace Creality {
+  class LevelingDisabler {
+    public:
+      static void Disable();
+      static void ReEnable();
+    private:
+      #if HAS_LEVELING
+        static bool levelingWasEnabled;
+      #endif
+  };
+
+  class ManualLevel {
+      static constexpr float MARGIN = 32.5; // mm
+    public:
+      static void ProbeBL();
+      static void ProbeBR();
+      static void ProbeTL();
+      static void ProbeTR();
+      static void ProbeC();
+    private:
+    private:
+      ManualLevel() { }
+      static ManualLevel self;
+  };
+} // namespace Creality
+
 class CrealityActions {
 public:
   static void Cooldown();
@@ -36,12 +62,11 @@ public:
   static void HomeIfNeeded();
   static inline void HomeAndDisableLeveling() {
     HomeIfNeeded();
-    DisableLeveling();
+    Creality::LevelingDisabler::Disable();
   }
-  static void DisableLeveling();
-  static void ReEnableLeveling();
 
   static void LoadFilament();
   static void UnloadFilament();
   static void ChangeFilament();
 };
+

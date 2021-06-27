@@ -70,9 +70,9 @@ static const constexpr Creality::Menu homeMenu {
   {
     MenuBack(),
     { Icon::Homing,     "Home All",           Action_Do{CrealityActions::HomeAll} },
-//TODO    { Icon::MoveX,      "Home X",             Action_GCode_Sync{Home, "G28 X"} },
-//TODO    { Icon::MoveY,      "Home Y",             Action_GCode_Sync{Home, "G28 Y"} },
-//TODO    { Icon::MoveZ,      "Home Z",             Action_GCode_Sync{Home, "G28 Z"} },
+    { Icon::MoveX,      "Home X",             Action_GCode_Sync{Home, "G28 X"}    },
+    { Icon::MoveY,      "Home Y",             Action_GCode_Sync{Home, "G28 Y"}    },
+    { Icon::MoveZ,      "Home Z",             Action_GCode_Sync{Home, "G28 Z"}    },
 //TODO    { Icon::SetHome,    "Set Home Position",  Action_GCode_Beep{"G92 X0 Y0 Z0"} },
     EndMenu()
   }
@@ -82,11 +82,30 @@ static const constexpr Creality::Menu manualLevelingMenu {
   "Manual Leveling",
   MenuType_List {
     .on_enter = CrealityActions::HomeAndDisableLeveling,
-    .on_leave = CrealityActions::ReEnableLeveling,
+    .on_leave = LevelingDisabler::ReEnable,
   },
   {
     MenuBack(),
-    // TODO
+    /*{ Icon::Zoffset, "Use Probe", Action_Value{&useProbe} },
+              use_probe = !use_probe;
+              Draw_Checkbox(row, use_probe);
+              if (use_probe) {
+                Popup_Handler(Level);
+                corner_avg = 0;
+                corner_avg += probe.probe_at_point(32.5f, 32.5f, PROBE_PT_RAISE);
+                corner_avg += probe.probe_at_point(32.5f, (Y_BED_SIZE + Y_MIN_POS) - 32.5f, PROBE_PT_RAISE);
+                corner_avg += probe.probe_at_point((X_BED_SIZE + X_MIN_POS) - 32.5f, (Y_BED_SIZE + Y_MIN_POS) - 32.5f, PROBE_PT_RAISE);
+                corner_avg += probe.probe_at_point((X_BED_SIZE + X_MIN_POS) - 32.5f, 32.5f, PROBE_PT_STOW);
+                corner_avg /= 4;
+                Redraw_Menu();
+              }
+    */
+    { Icon::AxisBL,     "Bottom Left",  Action_Do{ManualLevel::ProbeBL} },
+    { Icon::AxisTL,     "Top Left",     Action_Do{ManualLevel::ProbeTL} },
+    { Icon::AxisTR,     "Top Right",    Action_Do{ManualLevel::ProbeTR} },
+    { Icon::AxisBR,     "Bottom Right", Action_Do{ManualLevel::ProbeBR} },
+    { Icon::AxisC,      "Center",       Action_Do{ManualLevel::ProbeC}  },
+    //{ Icon::SetZOffset, "Z Position",   Action_Value{&ManualLevel::zPositionEdit} },
     EndMenu()
   }
 };
@@ -94,8 +113,8 @@ static const constexpr Creality::Menu manualLevelingMenu {
 static const constexpr Creality::Menu zOffsetMenu {
   "Z Offset",
   MenuType_List {
-      .on_enter = CrealityActions::DisableLeveling,
-      .on_leave = CrealityActions::ReEnableLeveling,
+      .on_enter = LevelingDisabler::Disable,
+      .on_leave = LevelingDisabler::ReEnable,
   },
   {
     MenuBack(),
@@ -131,18 +150,18 @@ static const constexpr Creality::Menu prepareMenu {
   MenuType_List{},
   {
     MenuBack(),
-    { Icon::Axis,       "Move",             Action_EnterMenu{moveMenu}              },
-//TODO    { Icon::CloseMotor,   "Disable Stepper",  Action_GCode{"M84"} },
-    { Icon::SetHome,    "Homing",           Action_EnterMenu{homeMenu}              },
-    { Icon::PrintSize,  "Manual Leveling",  Action_EnterMenu{manualLevelingMenu}    },
+    { Icon::Axis,       "Move",             Action_EnterMenu{moveMenu}           },
+    { Icon::CloseMotor, "Disable Stepper",  Action_GCode_Queue{"M84"}            },
+    { Icon::SetHome,    "Homing",           Action_EnterMenu{homeMenu}           },
+    { Icon::PrintSize,  "Manual Leveling",  Action_EnterMenu{manualLevelingMenu} },
 
     #if HAS_ZOFFSET_ITEM
-    { Icon::Zoffset,      "Z-Offset",         Action_EnterMenu{zOffsetMenu}         },
+      { Icon::Zoffset,  "Z-Offset",         Action_EnterMenu{zOffsetMenu}        },
     #endif
 
     #if HAS_PREHEAT
-      { Icon::Temperature,    "Preheat",      Action_EnterMenu{preheatMenu}         },
-      { Icon::Cool,           "Cooldown",     Action_Do{CrealityActions::Cooldown}  },
+      { Icon::Temperature,  "Preheat",      Action_EnterMenu{preheatMenu}        },
+      { Icon::Cool,         "Cooldown",     Action_Do{CrealityActions::Cooldown} },
     #endif
 
     #if ENABLED(ADVANCED_PAUSE_FEATURE)
@@ -150,21 +169,7 @@ static const constexpr Creality::Menu prepareMenu {
         #if ENABLED(FILAMENT_LOAD_UNLOAD_GCODES)
           Action_EnterMenu{changeFilamentMenu},
         #else
-        /*
-                if (thermalManager.temp_hotend[0].target < thermalManager.extrude_min_temp) {
-                  Popup_Handler(ETemp);
-                }
-                else {
-                  if (thermalManager.temp_hotend[0].celsius < thermalManager.temp_hotend[0].target-2) {
-                    Popup_Handler(Heating);
-                    thermalManager.wait_for_hotend(0);
-                  }
-                  Popup_Handler(FilChange);
-                  char buf[20];
-                  sprintf(buf, "M600 B1 R%i", thermalManager.temp_hotend[0].target);
-                  gcode.process_subcommands_now_P(buf);
-                }
-         */
+          Action_Do{CrealityActions::ChangeFilament}
         #endif
       },
     #endif
