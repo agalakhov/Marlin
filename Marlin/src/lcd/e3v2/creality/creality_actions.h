@@ -27,6 +27,7 @@
  * Refactor by Alexey Galakhov
  */
 
+void AudioFeedback(bool success = true);
 void Execute_GCode(const char * fmt, ...);
 
 namespace Creality {
@@ -75,5 +76,9 @@ public:
     HomeIfNeeded();
     Creality::LevelingDisabler::Disable();
   }
+
+  static void SaveEEPROM();
+  static void ReadEEPROM();
+  static void ResetSettings();
 };
 

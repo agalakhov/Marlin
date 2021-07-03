@@ -178,6 +178,61 @@ static const constexpr Creality::Menu prepareMenu {
   }
 };
 
+static const constexpr Creality::Menu temperatureMenu = {
+  "Temperature",
+  MenuType_List{},
+  {
+    MenuBack(),
+    // TODO
+    EndMenu()
+  }
+};
+
+static const constexpr Creality::Menu motionMenu = {
+  "Motion",
+  MenuType_List{},
+  {
+    MenuBack(),
+    // TODO
+    EndMenu()
+  }
+};
+
+static const constexpr Creality::Menu visualMenu = {
+  "Visual",
+  MenuType_List{},
+  {
+    MenuBack(),
+    // TODO
+    EndMenu()
+  }
+};
+
+static const constexpr Creality::Menu advancedMenu = {
+  "Advanced",
+  MenuType_List{},
+  // TODO
+  EndMenu()
+};
+
+static const constexpr Creality::Menu controlMenu {
+  "Control",
+  MenuType_List{},
+  {
+    MenuBack(),
+    { Icon::Temperature,    "Temperature",  Action_EnterMenu{temperatureMenu}   },
+    { Icon::Motion,         "Motion",       Action_EnterMenu{motionMenu}        },
+    { Icon::PrintSize,      "Visual",       Action_EnterMenu{visualMenu}        },
+    { Icon::Version,        "Advanced",     Action_EnterMenu{advancedMenu}      },
+    #if ENABLED(EEPROM_SETTINGS)
+      { Icon::WriteEEPROM,  "Store Settings",   Action_Do{CrealityActions::SaveEEPROM}          },
+      { Icon::ReadEEPROM,   "Restore Settings", Action_Do{CrealityActions::ReadEEPROM}          },
+      { Icon::Temperature,  "Reset to Defaults",    Action_Do{CrealityActions::ResetSettings}   },
+    #endif
+    EndMenu()
+  }
+};
+
 const constexpr Creality::Menu Creality_mainMenu {
   "Main Menu",
   MenuType_Icons {

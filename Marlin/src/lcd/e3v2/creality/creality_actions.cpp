@@ -34,9 +34,16 @@
 #include "../../../MarlinCore.h"
 #include "../../../gcode/gcode.h"
 #include "../../../module/planner.h"
+#include "../../../module/settings.h"
 #include "../../../module/temperature.h"
 
 #include <cstdarg>
+
+#include "creality_dwin.h"
+
+void AudioFeedback(bool success) {
+  CrealityDWIN.AudioFeedback(success);
+}
 
 void Execute_GCode(const char * fmt, ...) {
   static char buf[64];
@@ -63,6 +70,19 @@ void CrealityActions::RetractProbe() {
 
 void CrealityActions::HomeIfNeeded() {
     // TODO
+}
+
+void CrealityActions::SaveEEPROM() {
+  AudioFeedback(settings.save());
+}
+
+void CrealityActions::ReadEEPROM() {
+  AudioFeedback(settings.load());
+}
+
+void CrealityActions::ResetSettings() {
+  settings.reset();
+  AudioFeedback();
 }
 
 namespace Creality {
@@ -121,6 +141,4 @@ namespace Creality {
     }
   }
 
-}
-
-
+} // namespace Creality
