@@ -27,3 +27,18 @@
  */
 
 #include "popup.h"
+
+#include "creality_dwin.h"
+
+namespace Creality {
+
+PopupWaiting PopupEngine::Waiting(PopupID id, bool alternate) {
+  CrealityDWIN.Popup_Handler(id, alternate);
+  return PopupWaiting();
+}
+
+void PopupEngine::Message(PopupID id) {
+  CrealityDWIN.Popup_Handler(id);
+}
+
+} // namespace Creality

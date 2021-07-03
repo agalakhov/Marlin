@@ -37,3 +37,28 @@ enum PopupID : uint8_t {
   FilInsert, HeaterTime, UserInput, LevelError, InvalidMesh, UI, Complete
 };
 
+namespace Creality {
+
+  // Scope class for popup waiting processes.
+  // Destruction removes the popup.
+  // Re-entrable: creating any popup while waiting clears immediately.
+  class PopupWaiting {
+      friend class PopupEngine;
+    public:
+      ~PopupWaiting();
+    private:
+      PopupWaiting(); // to be only constructed by `PopupEngine`
+      PopupWaiting(const PopupWaiting&) = delete;
+      PopupWaiting& operator= (const PopupWaiting&) = delete;
+  };
+
+  class PopupEngine {
+    public:
+      PopupWaiting Waiting(PopupID id, bool alternate = false);
+      void Message(PopupID id);
+  };
+
+  extern PopupEngine popupEngine;
+} // namespace Creality
+
+#define POPUP_WAITING(engine, ...) if(auto _wait_scope = (engine).Waiting(__VA_ARGS__); true)

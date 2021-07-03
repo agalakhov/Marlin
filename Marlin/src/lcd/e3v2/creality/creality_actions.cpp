@@ -81,26 +81,25 @@ namespace Creality {
 
   void FilamentLoader::Load() {
     if (CheckTemperature()) {
-      PopupHandler(FilLoad);
-                gcode.process_subcommands_now_P(PSTR("M701"));
-                planner.synchronize();
-                Redraw_Menu();
+      POPUP_WAITING(popupEngine, FilLoad) {
+        Execute_GCode("M701");
+      }
     }
   }
 
   void FilamentLoader::Unload() {
     if (CheckTemperature()) {
-      PopupHandler(FilLoad, true);
-                gcode.process_subcommands_now_P(PSTR("M702"));
-                planner.synchronize();
-                Redraw_Menu();
+      POPUP_WAITING(popupEngine, FilLoad, true) {
+        Execute_GCode("M702");
+      }
     }
   }
 
   void FilamentLoader::Change() {
     if (CheckTemperature()) {
-      PopupHandler(FilChange);
-      Execute_GCode("M600 B1 R%i", thermalManager.temp_hotend[0].target);
+      POPUP_WAITING(popupEngine, FilChange) {
+        Execute_GCode("M600 B1 R%i", thermalManager.temp_hotend[0].target);
+      }
     }
   }
 
@@ -110,12 +109,13 @@ namespace Creality {
     const auto& hotend = thermalManager.temp_hotend[0];
 
     if (hotend.target < thermalManager.extrude_min_temp) {
-      Popup_Handler(ETemp);
+      popupEngine.Message(ETemp);
       return false;
     } else {
       if (hotend.celsius < hotend.target - maxTempDiff) {
-        Popup_Handler(Heating);
-        thermalManager.wait_for_hotend(0);
+        POPUP_WAITING(popupEngine, Heating) {
+          thermalManager.wait_for_hotend(0);
+        }
       }
       return true;
     }
