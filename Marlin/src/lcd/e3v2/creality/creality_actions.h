@@ -27,6 +27,8 @@
  * Refactor by Alexey Galakhov
  */
 
+void Execute_GCode(const char * fmt, ...);
+
 namespace Creality {
   class LevelingDisabler {
     public:
@@ -51,6 +53,15 @@ namespace Creality {
       ManualLevel() { }
       static ManualLevel self;
   };
+
+  class FilamentLoader {
+    public:
+      static void Load();
+      static void Unload();
+      static void Change();
+    private:
+      static bool CheckTemperature();
+  };
 } // namespace Creality
 
 class CrealityActions {
@@ -64,9 +75,5 @@ public:
     HomeIfNeeded();
     Creality::LevelingDisabler::Disable();
   }
-
-  static void LoadFilament();
-  static void UnloadFilament();
-  static void ChangeFilament();
 };
 

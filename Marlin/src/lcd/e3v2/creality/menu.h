@@ -29,6 +29,8 @@
 
 #include "../../../inc/MarlinConfigPre.h"
 #include "dwin_defs.h"
+#include "popup.h"
+#include "popup.h"
 #include "geometry.h"
 #include <cstdint>
 #include <variant>

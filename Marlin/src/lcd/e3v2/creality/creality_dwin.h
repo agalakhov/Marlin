@@ -30,9 +30,9 @@
 #include "geometry.h"
 #include "menu.h"
 #include "rotary_encoder.h"
+#include "popup.h"
 #include "../../../libs/BL24CXX.h"
 #include "../../../inc/MarlinConfigPre.h"
-#include "geometry.h"
 
 enum processID : uint8_t {
   Main, Print, Menu, Value, Option, File, Popup, Confirm, Keyboard, Wait

@@ -27,11 +27,26 @@
  */
 
 #include "creality_actions.h"
+#include "popup.h"
+
 #include "../../../inc/MarlinConfigPre.h"
 
 #include "../../../MarlinCore.h"
 #include "../../../gcode/gcode.h"
+#include "../../../module/planner.h"
 #include "../../../module/temperature.h"
+
+#include <cstdarg>
+
+void Execute_GCode(const char * fmt, ...) {
+  static char buf[64];
+  va_list vl;
+  va_start(vl, fmt);
+  vsnprintf(buf, sizeof(buf), fmt, vl);
+  va_end(vl);
+  gcode.process_subcommands_now(buf);
+  planner.synchronize();
+}
 
 void CrealityActions::Cooldown() {
   thermalManager.zero_fan_speeds();
@@ -50,18 +65,6 @@ void CrealityActions::HomeIfNeeded() {
     // TODO
 }
 
-void CrealityActions::LoadFilament() {
-    // TODO
-}
-
-void CrealityActions::UnloadFilament() {
-    // TODO
-}
-
-void CrealityActions::ChangeFilament() {
-    // TODO
-}
-
 namespace Creality {
   void LevelingDisabler::Disable() {
     #if HAS_LEVELING
@@ -75,4 +78,49 @@ namespace Creality {
       set_bed_leveling_enabled(levelingWasEnabled);
     #endif
   }
+
+  void FilamentLoader::Load() {
+    if (CheckTemperature()) {
+      PopupHandler(FilLoad);
+                gcode.process_subcommands_now_P(PSTR("M701"));
+                planner.synchronize();
+                Redraw_Menu();
+    }
+  }
+
+  void FilamentLoader::Unload() {
+    if (CheckTemperature()) {
+      PopupHandler(FilLoad, true);
+                gcode.process_subcommands_now_P(PSTR("M702"));
+                planner.synchronize();
+                Redraw_Menu();
+    }
+  }
+
+  void FilamentLoader::Change() {
+    if (CheckTemperature()) {
+      PopupHandler(FilChange);
+      Execute_GCode("M600 B1 R%i", thermalManager.temp_hotend[0].target);
+    }
+  }
+
+  bool FilamentLoader::CheckTemperature() {
+    constexpr auto maxTempDiff = 2.0;
+
+    const auto& hotend = thermalManager.temp_hotend[0];
+
+    if (hotend.target < thermalManager.extrude_min_temp) {
+      Popup_Handler(ETemp);
+      return false;
+    } else {
+      if (hotend.celsius < hotend.target - maxTempDiff) {
+        Popup_Handler(Heating);
+        thermalManager.wait_for_hotend(0);
+      }
+      return true;
+    }
+  }
+
 }
+
+
