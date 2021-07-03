@@ -109,7 +109,7 @@ namespace Creality {
     const auto& hotend = thermalManager.temp_hotend[0];
 
     if (hotend.target < thermalManager.extrude_min_temp) {
-      popupEngine.Message(ETemp);
+      popupEngine.Message(ETemp); // FIXME trojan horse
       return false;
     } else {
       if (hotend.celsius < hotend.target - maxTempDiff) {
