@@ -32,6 +32,7 @@
 #include "../../../inc/MarlinConfigPre.h"
 
 #include "../../../module/planner.h"
+#include "../../../module/temperature.h"
 
 using namespace Creality;
 using DWIN::Icon;
@@ -178,12 +179,98 @@ static const constexpr Creality::Menu prepareMenu {
   }
 };
 
-static const constexpr Creality::Menu temperatureMenu = {
+#if HAS_HOTEND
+  static const constexpr Creality::Menu hotendPIDMenu = {
+    "Hotend PID Settings",
+    MenuType_List{},
+    {
+      MenuBack(),
+      // TODO
+      EndMenu()
+    }
+  };
+#endif
+
+#if HAS_HEATED_BED
+  static const constexpr Creality::Menu bedPIDMenu = {
+    "Bed PID settings",
+    MenuType_List{},
+    {
+      MenuBack(),
+      // TODO
+      EndMenu()
+    }
+  };
+#endif
+
+#if ANY(HAS_HOTEND, HAS_HEATED_BED)
+  static uint8_t pid_autotune_cycles = 5;
+
+  static const constexpr Creality::EditableNumber<uint8_t> autotuneCycles { &pid_autotune_cycles, 3, 50, 1 };
+
+  static const constexpr Creality::Menu pidMenu {
+    "PID",
+    MenuType_List{},
+    {
+      MenuBack(),
+
+      #if HAS_HOTEND
+      { Icon::HotendTemp,   "Hotend",           Action_EnterMenu{hotendPIDMenu} },
+      #endif
+
+      #if HAS_HEATED_BED
+      { Icon::BedTemp,      "Bed",              Action_EnterMenu{bedPIDMenu}    },
+      #endif
+
+      { Icon::FanSpeed,     "Autotune Cycles",  Action_Value{&autotuneCycles} },
+
+      EndMenu()
+    }
+  };
+#endif
+
+#if HAS_HOTEND
+  static const constexpr celsius_t MIN_E_TEMP = 0;
+  static const constexpr celsius_t MAX_E_TEMP = (HEATER_0_MAXTEMP - HOTEND_OVERSHOOT);
+  static const constexpr Creality::EditableNumber<celsius_t> hotendTemp { &thermalManager.temp_hotend[0].target, MIN_E_TEMP, MAX_E_TEMP, 1 };
+#endif
+
+#if HAS_HEATED_BED
+  static const constexpr celsius_t MIN_BED_TEMP = 0;
+  static const constexpr celsius_t MAX_BED_TEMP = BED_MAXTEMP;
+  static const constexpr Creality::EditableNumber<celsius_t> bedTemp { &thermalManager.temp_bed.target, MIN_BED_TEMP, MAX_BED_TEMP, 1 };
+#endif
+
+#if HAS_FAN
+  static const constexpr uint8_t MIN_FAN_SPEED = 0;
+  static const constexpr uint8_t MAX_FAN_SPEED = 255;
+  static const constexpr Creality::EditableNumber<uint8_t> fanSpeed { &thermalManager.fan_speed[0], MIN_FAN_SPEED, MAX_FAN_SPEED, 1 };
+#endif
+
+static const constexpr Creality::Menu temperatureMenu {
   "Temperature",
   MenuType_List{},
   {
     MenuBack(),
+
+    #if HAS_HOTEND
+      { Icon::SetEndTemp,   "Hotend",   Action_Value{&hotendTemp}    },
+    #endif
+
+    #if HAS_HEATED_BED
+      { Icon::SetBedTemp,   "Bed",      Action_Value{&bedTemp}       },
+    #endif
+
+    #if HAS_FAN
+      { Icon::FanSpeed,     "Fan",      Action_Value{&fanSpeed}       },
+    #endif
+
+    #if ANY(HAS_HOTEND, HAS_HEATED_BED)
+      { Icon::Step,         "PID",      Action_EnterMenu{pidMenu}   },
+    #endif
+
     // TODO
+
     EndMenu()
   }
 };
