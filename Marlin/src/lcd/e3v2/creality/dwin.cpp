@@ -40,6 +40,8 @@
 //#define DEBUG_OUT 1
 #include "../../../core/debug_out.h"
 
+using namespace DWIN;
+
 // Make sure DWIN_SendBuf is large enough to hold the largest string plus draw command and tail.
 // Assume the narrowest (6 pixel) font and 2-byte gb2312-encoded characters.
 uint8_t DWIN_SendBuf[11 + DWIN_WIDTH / 6 * 2] = { 0xAA };
@@ -254,7 +256,7 @@ void DWIN_Frame_AreaMove(uint8_t mode, uint8_t dir, uint16_t dis,
 //  bColor: Background color
 //  x/y: Upper-left coordinate of the string
 //  *string: The string
-void DWIN_Draw_String(bool widthAdjust, bool bShow, uint8_t size,
+void DWIN_Draw_String(bool widthAdjust, bool bShow, Font size,
                       uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, const char * string) {
   size_t i = 0;
   DWIN_Byte(i, 0x11);
@@ -262,7 +264,7 @@ void DWIN_Draw_String(bool widthAdjust, bool bShow, uint8_t size,
   // Bit 6: bShow
   // Bit 5-4: Unused (0)
   // Bit 3-0: size
-  DWIN_Byte(i, (widthAdjust * 0x80) | (bShow * 0x40) | size);
+  DWIN_Byte(i, (widthAdjust * 0x80) | (bShow * 0x40) | uint8_t(size));
   DWIN_Word(i, color);
   DWIN_Word(i, bColor);
   DWIN_Word(i, x);
@@ -281,7 +283,7 @@ void DWIN_Draw_String(bool widthAdjust, bool bShow, uint8_t size,
 //  iNum: Number of digits
 //  x/y: Upper-left coordinate
 //  value: Integer value
-void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t size, uint16_t color,
+void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font size, uint16_t color,
                           uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, uint16_t value) {
   size_t i = 0;
   DWIN_Byte(i, 0x14);
@@ -290,7 +292,7 @@ void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t 
   // Bit 5: zeroFill
   // Bit 4: zeroMode
   // Bit 3-0: size
-  DWIN_Byte(i, (bShow * 0x80) | (zeroFill * 0x20) | (zeroMode * 0x10) | size);
+  DWIN_Byte(i, (bShow * 0x80) | (zeroFill * 0x20) | (zeroMode * 0x10) | uint8_t(size));
   DWIN_Word(i, color);
   DWIN_Word(i, bColor);
   DWIN_Byte(i, iNum);
@@ -327,12 +329,12 @@ void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t 
 //  fNum: Number of decimal digits
 //  x/y: Upper-left point
 //  value: Float value
-void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t size, uint16_t color,
+void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font size, uint16_t color,
                             uint16_t bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, long value) {
   //uint8_t *fvalue = (uint8_t*)&value;
   size_t i = 0;
   DWIN_Byte(i, 0x14);
-  DWIN_Byte(i, (bShow * 0x80) | (zeroFill * 0x20) | (zeroMode * 0x10) | size);
+  DWIN_Byte(i, (bShow * 0x80) | (zeroFill * 0x20) | (zeroMode * 0x10) | uint8_t(size));
   DWIN_Word(i, color);
   DWIN_Word(i, bColor);
   DWIN_Byte(i, iNum);
@@ -364,7 +366,7 @@ void DWIN_JPG_ShowAndCache(const uint8_t id) {
 //  libID: Icon library ID
 //  picID: Icon ID
 //  x/y: Upper-left point
-void DWIN_ICON_Show(uint8_t libID, uint8_t picID, uint16_t x, uint16_t y) {
+void DWIN_ICON_Show(uint8_t libID, Icon picID, uint16_t x, uint16_t y) {
   NOMORE(x, DWIN_WIDTH - 1);
   NOMORE(y, DWIN_HEIGHT - 1); // -- ozy -- srl
   size_t i = 0;
@@ -372,7 +374,7 @@ void DWIN_ICON_Show(uint8_t libID, uint8_t picID, uint16_t x, uint16_t y) {
   DWIN_Word(i, x);
   DWIN_Word(i, y);
   DWIN_Byte(i, 0x80 | libID);
-  DWIN_Byte(i, picID);
+  DWIN_Byte(i, uint8_t(picID));
   DWIN_Send(i);
 }
 
