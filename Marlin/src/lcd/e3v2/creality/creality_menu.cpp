@@ -33,6 +33,9 @@
 
 #include "../../../module/planner.h"
 #include "../../../module/temperature.h"
+#if ENABLED(POWER_LOSS_RECOVERY)
+  #include "../../../feature/powerloss.h"
+#endif
 
 using namespace Creality;
 using DWIN::Icon;
@@ -295,11 +298,73 @@ static const constexpr Creality::Menu visualMenu = {
   }
 };
 
+static const constexpr Creality::Menu probeMenu = {
+  "Probe",
+  MenuType_List{},
+  {
+    MenuBack(),
+    // TODO
+    EndMenu()
+  }
+};
+
+static const constexpr Creality::EditableBoolGetSet lcdBeeper {
+  []() { return CrealityDWIN.eeprom_settings.beeperenable; },
+  [](bool x) { CrealityDWIN.eeprom_settings.beeperenable = x; },
+};
+extern float corner_pos; // FIXME
+static const constexpr Creality::EditableNumber<float> cornerPos { &corner_pos, 1, 100, 0.1 };
+#if ENABLED(LIN_ADVANCE)
+  static const constexpr Creality::EditableNumber<float> extruderAdvanceK { &planner.extruder_advance_K[0], 0, 10, 0.01 };
+#endif
+#if ENABLED(ADVANCED_PAUSE_FEATURE)
+  static const constexpr Creality::EditableNumber<float> loadLength { &fc_settings[0].load_length, 0, EXTRUDE_MAXLENGTH, 1 };
+  static const constexpr Creality::EditableNumber<float> unloadLength { &fc_settings[0].unload_length, 0, EXTRUDE_MAXLENGTH, 1 };
+#endif
+#if ENABLED(PREVENT_COLD_EXTRUSION)
+  static const constexpr Creality::EditableNumber<celsius_t> minExtrusionT { &thermalManager.extrude_min_temp, 0, MAX_E_TEMP, 1 }; 
+#endif
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+  static const constexpr Creality::EditableBool runoutEnabled { &runout.enabled };
+  #if ENABLED(HAS_FILAMENT_RUNOUT_DISTANCE)
+    static const constexpr Creality::EditableNumber<float> runoutDistance { &runout.runout_distance(), 0, 999, 0.1 };
+  #endif
+#endif
+#if ENABLED(POWER_LOSS_RECOVERY)
+  static const constexpr Creality::EditableBool recoveryEnabled { &recovery.enabled };
+#endif
+
 static const constexpr Creality::Menu advancedMenu = {
   "Advanced",
   MenuType_List{},
-  // TODO
-  EndMenu()
+  {
+    MenuBack(),
+    { Icon::Version,  "LCD Beeper",   Action_Value{&lcdBeeper} },
+    #if HAS_BED_PROBE
+      { Icon::StepX,    "Probe",    Action_EnterMenu{&probeMenu} },
+    #endif
+    { Icon::MaxAccelerated, "Bed Screw Inset",  Action_Value{&cornerPos} },
+    #if ENABLED(LIN_ADVANCE)
+      { Icon::MaxAccelerated,   "Lin Advance Kp",   Action_Value{&extruderAdvanceK} },
+    #endif
+    #if ENABLED(ADVANCED_PAUSE_FEATURE)
+      { Icon::WriteEEPROM,  "Load Length",      Action_Value{&loadLength} },
+      { Icon::ReadEEPROM,   "Unload Length",    Action_Value{&unloadLength} },
+    #endif
+    #if ENABLED(PREVENT_COLD_EXTRUSION)
+      { Icon::Cool,     "Min Extrusion T",      Action_Value{&minExtrusionT} },
+    #endif
+    #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+      { Icon::Extruder, "Filament Sensor",      Action_Value{&runoutEnabled} },
+      #if ENABLED(HAS_FILAMENT_RUNOUT_DISTANCE)
+        { Icon::MaxAccE,    "Runout Distance",  Action_Value{&runoutDistance} },
+      #endif
+    #endif
+    #if ENABLED(POWER_LOSS_RECOVERY)
+      { Icon::Motion,   "Power-loss Recovery",  Action_Value{&recoveryEnabled} },
+    #endif
+    EndMenu()
+  }
 };
 
 static const constexpr Creality::Menu controlMenu {

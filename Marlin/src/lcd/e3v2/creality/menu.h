@@ -145,6 +145,20 @@ namespace Creality {
     virtual void Step(bool sign) const;
   };
 
+  // Editable boolean value backed by getter and setter
+  struct EditableBoolGetSet : public EditableItem {
+    bool (* const get)();
+    void (* const set)(bool);
+  public:
+    constexpr EditableBoolGetSet(bool (* _get)(), void (* _set)(bool))
+      : get(_get)
+      , set(_set)
+    { }
+    virtual void Draw(Point position, bool selected) const;
+    virtual bool Enter() const;
+    virtual void Step(bool) const { /* unreachable */ }
+  };
+
   // Editable boolean value
   struct EditableBool : public EditableItem {
     bool * const value;
