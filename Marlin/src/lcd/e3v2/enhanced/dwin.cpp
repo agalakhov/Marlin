@@ -988,7 +988,7 @@ void Redraw_SD_List() {
   }
   else {
     DWIN_Draw_Rectangle(1, HMI_data.AlertBg_Color, 10, MBASE(3) - 10, DWIN_WIDTH - 10, MBASE(4));
-    DWINUI::Draw_CenteredString(font16x32, HMI_data.AlertTxt_Color, MBASE(3), GET_TEXT_F(MSG_MEDIA_NOT_INSERTED));
+    DWINUI::Draw_CenteredString(DWIN_FONT_ALERT, HMI_data.AlertTxt_Color, MBASE(3), GET_TEXT_F(MSG_MEDIA_NOT_INSERTED));
   }
 }
 
@@ -1795,7 +1795,7 @@ void Draw_Title(TitleClass* title) {
   if (title->frameid)
     DWIN_Frame_AreaCopy(title->frameid, title->frame.left, title->frame.top, title->frame.right, title->frame.bottom, 14, (TITLE_HEIGHT - (title->frame.bottom - title->frame.top)) / 2 - 1);
   else
-    DWIN_Draw_String(false, DWIN_FONT_HEAD, HMI_data.TitleTxt_color, HMI_data.TitleBg_color, 14, (TITLE_HEIGHT - DWINUI::fontHeight(DWIN_FONT_HEAD)) / 2 - 1, title->caption);
+    DWIN_Draw_String(false, DWIN_FONT_HEAD, HMI_data.TitleTxt_color, HMI_data.TitleBg_color, 14, (TITLE_HEIGHT - DWIN_FONT_HEAD.height()) / 2 - 1, title->caption);
 }
 
 void Draw_Menu(MenuClass* menu) {
@@ -2065,7 +2065,7 @@ void SetValueOnClick(uint8_t process, const int32_t lo, const int32_t hi, const 
 void SetValueOnClick(uint8_t process, const float lo, const float hi, uint8_t dp, const float val, void (*Apply)() = nullptr, void (*LiveUpdate)() = nullptr) {
   const int32_t value =  round(val * POW(10, dp));
   SetOnClick(process, lo * POW(10, dp), hi * POW(10, dp), dp, value, Apply, LiveUpdate);
-  DWINUI::Draw_Signed_Float(HMI_data.Text_Color, HMI_data.Selected_Color, 3, dp, VALX - dp * DWINUI::fontWidth(DWIN_FONT_MENU), MBASE(CurrentMenu->line()), val);
+  DWINUI::Draw_Signed_Float(HMI_data.Text_Color, HMI_data.Selected_Color, 3, dp, VALX - dp * DWIN_FONT_MENU.width(), MBASE(CurrentMenu->line()), val);
 }
 
 // Generic onclick event for integer values
@@ -2487,7 +2487,7 @@ void TramC () { Tram(4); }
     planner.synchronize();
     #ifdef MANUAL_PROBE_START_Z
       const uint8_t line = CurrentMenu->line(MMeshMoveZItem->pos);
-      DWINUI::Draw_Signed_Float(HMI_data.Text_Color, HMI_data.Background_Color, 3, 2, VALX - 2 * DWINUI::fontWidth(DWIN_FONT_MENU), MBASE(line), MANUAL_PROBE_START_Z);
+      DWINUI::Draw_Signed_Float(HMI_data.Text_Color, HMI_data.Background_Color, 3, 2, VALX - 2 * DWIN_FONT_MENU.width(), MBASE(line), MANUAL_PROBE_START_Z);
     #endif
   }
 
@@ -2630,7 +2630,7 @@ void onDrawPInt32Menu(MenuItemClass* menuitem, int8_t line) {
 
 void onDrawFloatMenu(MenuItemClass* menuitem, int8_t line, uint8_t dp, const float value) {
   onDrawMenuItem(menuitem, line);
-  DWINUI::Draw_Signed_Float(HMI_data.Text_Color, HMI_data.Background_Color, 3, dp, VALX - dp * DWINUI::fontWidth(DWIN_FONT_MENU), MBASE(line), value);
+  DWINUI::Draw_Signed_Float(HMI_data.Text_Color, HMI_data.Background_Color, 3, dp, VALX - dp * DWIN_FONT_MENU.width(), MBASE(line), value);
 }
 
 void onDrawPFloatMenu(MenuItemClass* menuitem, int8_t line) {
@@ -3146,12 +3146,12 @@ int8_t HMI_GetFloat(uint8_t dp, int32_t lo, int32_t hi) {
   if (encoder_diffState != ENCODER_DIFF_NO) {
     if (Apply_Encoder(encoder_diffState, HMI_value.Value)) {
       EncoderRate.enabled = false;
-      DWINUI::Draw_Signed_Float(HMI_data.Text_Color, HMI_data.Background_Color, 3, dp, VALX - dp * DWINUI::fontWidth(DWIN_FONT_MENU), MBASE(CurrentMenu->line()), HMI_value.Value / POW(10, dp));
+      DWINUI::Draw_Signed_Float(HMI_data.Text_Color, HMI_data.Background_Color, 3, dp, VALX - dp * DWIN_FONT_MENU.width(), MBASE(CurrentMenu->line()), HMI_value.Value / POW(10, dp));
       checkkey = Menu;
       return 2;
     }
     LIMIT(HMI_value.Value, lo, hi);
-    DWINUI::Draw_Signed_Float(HMI_data.Text_Color, HMI_data.Selected_Color, 3, dp, VALX - dp * DWINUI::fontWidth(DWIN_FONT_MENU), MBASE(CurrentMenu->line()), HMI_value.Value / POW(10, dp));
+    DWINUI::Draw_Signed_Float(HMI_data.Text_Color, HMI_data.Selected_Color, 3, dp, VALX - dp * DWIN_FONT_MENU.width(), MBASE(CurrentMenu->line()), HMI_value.Value / POW(10, dp));
     return 1;
   }
   return 0;

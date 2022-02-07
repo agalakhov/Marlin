@@ -407,7 +407,7 @@ public:
       #if HAS_MARLINUI_U8GLIB
         static void set_font(const MarlinFont font_nr);
       #elif IS_DWIN_MARLINUI
-        static void set_font(const uint8_t font_nr);
+        static void set_font(const Font font_nr);
       #endif
 
       #if HAS_MARLINUI_HD44780

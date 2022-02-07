@@ -430,11 +430,11 @@ void _Decorate_Menu_Item(const uint8_t line, const uint8_t icon, bool more) {
   if (more) Draw_More_Icon(line);
 }
 void Draw_Menu_Item(const uint8_t line, const uint8_t icon=0, const char * const label=nullptr, bool more=false) {
-  if (label) DWIN_Draw_String(false, font8x16, Color_White, Color_Bg_Black, LBLX, MBASE(line) - 1, (char*)label);
+  if (label) DWIN_Draw_String(false, DWIN_FONT_MENU, Color_White, Color_Bg_Black, LBLX, MBASE(line) - 1, (char*)label);
   _Decorate_Menu_Item(line, icon, more);
 }
 void Draw_Menu_Item(const uint8_t line, const uint8_t icon=0, FSTR_P const flabel=nullptr, bool more=false) {
-  if (flabel) DWIN_Draw_String(false, font8x16, Color_White, Color_Bg_Black, LBLX, MBASE(line) - 1, flabel);
+  if (flabel) DWIN_Draw_String(false, Font::f8x16, Color_White, Color_Bg_Black, LBLX, MBASE(line) - 1, flabel);
   _Decorate_Menu_Item(line, icon, more);
 }
 
@@ -450,7 +450,7 @@ void Draw_Menu_Line(const uint8_t line, const uint8_t icon, FSTR_P const flabel,
 
 void Draw_Checkbox_Line(const uint8_t line, const bool ison) {
   const uint16_t x = 225, y = EBASE(line) - 2;
-  DWIN_Draw_String(true, font8x16, Color_White, Color_Bg_Black, x + 5, y, ison ? F("X") : F(" "));
+  DWIN_Draw_String(true, Font::f8x16, Color_White, Color_Bg_Black, x + 5, y, ison ? F("X") : F(" "));
   DWIN_Draw_Rectangle(0, Color_White, x + 2, y + 2, x + 16, y + 16);
 }
 
@@ -592,35 +592,35 @@ void say_steps_per_mm_en(const uint8_t row) {
 }
 
 void DWIN_Draw_Label(const uint8_t row, char *string) {
-  DWIN_Draw_String(true, font8x16, Color_White, Color_Bg_Black, LBLX, MBASE(row), string);
+  DWIN_Draw_String(true, Font::f8x16, Color_White, Color_Bg_Black, LBLX, MBASE(row), string);
 }
 void DWIN_Draw_Label(const uint8_t row, FSTR_P title) {
   DWIN_Draw_Label(row, (char*)title);
 }
 
-void DWIN_Draw_Signed_Float(uint8_t size, uint16_t bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, int32_t value) {
-  DWIN_Draw_String(true, size, Color_White, bColor, x - 8, y, value < 0 ? F("-") : F(" "));
-  DWIN_Draw_FloatValue(true, true, 0, size, Color_White, bColor, iNum, fNum, x, y, value < 0 ? -value : value);
+void DWIN_Draw_Signed_Float(Font font, uint16_t bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, int32_t value) {
+  DWIN_Draw_String(true, font, Color_White, bColor, x - 8, y, value < 0 ? F("-") : F(" "));
+  DWIN_Draw_FloatValue(true, true, 0, font, Color_White, bColor, iNum, fNum, x, y, value < 0 ? -value : value);
 }
 
 void Draw_Edit_Integer3(const uint8_t row, const uint16_t value, const bool active=false) {
-  DWIN_Draw_IntValue(true, true, 0, font8x16, Color_White, active ? Select_Color : Color_Bg_Black, 3, 220, EBASE(row), value);
+  DWIN_Draw_IntValue(true, true, 0, Font::f8x16, Color_White, active ? Select_Color : Color_Bg_Black, 3, 220, EBASE(row), value);
 }
 
 void Draw_Edit_Integer4(const uint8_t row, const uint16_t value, const bool active=false) {
-  DWIN_Draw_IntValue(true, true, 0, font8x16, Color_White, active ? Select_Color : Color_Bg_Black, 4, 220 - 1 * 8, EBASE(row), value);
+  DWIN_Draw_IntValue(true, true, 0, Font::f8x16, Color_White, active ? Select_Color : Color_Bg_Black, 4, 220 - 1 * 8, EBASE(row), value);
 }
 
 void Draw_Edit_Float3(const uint8_t row, const uint16_t value, const bool active=false) {
-  DWIN_Draw_FloatValue(true, true, 0, font8x16, Color_White, active ? Select_Color : Color_Bg_Black, 3, UNITFDIGITS, 220 - UNITFDIGITS * 8, EBASE(row), (int32_t)value);
+  DWIN_Draw_FloatValue(true, true, 0, Font::f8x16, Color_White, active ? Select_Color : Color_Bg_Black, 3, UNITFDIGITS, 220 - UNITFDIGITS * 8, EBASE(row), (int32_t)value);
 }
 
 void Draw_Edit_Signed_Float2(const uint8_t row, const float value, const bool active=false) {
-  DWIN_Draw_Signed_Float(font8x16, active ? Select_Color : Color_Bg_Black, 2, UNITFDIGITS + 1, 220 + 8 - UNITFDIGITS * 8, EBASE(row), value);
+  DWIN_Draw_Signed_Float(Font::f8x16, active ? Select_Color : Color_Bg_Black, 2, UNITFDIGITS + 1, 220 + 8 - UNITFDIGITS * 8, EBASE(row), value);
 }
 
 void Draw_Edit_Signed_Float3(const uint8_t row, const float value, const bool active=false) {
-  DWIN_Draw_Signed_Float(font8x16, active ? Select_Color : Color_Bg_Black, 3, UNITFDIGITS, 220 - UNITFDIGITS * 8, EBASE(row), value);
+  DWIN_Draw_Signed_Float(Font::f8x16, active ? Select_Color : Color_Bg_Black, 3, UNITFDIGITS, 220 - UNITFDIGITS * 8, EBASE(row), value);
 }
 
 void Draw_Stat_Int(const uint16_t xpos, const uint16_t ypos, const uint16_t value) {
@@ -756,7 +756,7 @@ void Item_Prepare_Lang(const uint8_t row) {
       Item_AreaCopy(1, 194, 96, 206, row);    // "LCD Language"
     #endif
   }
-  DWIN_Draw_String(false, font8x16, Color_White, Color_Bg_Black, 226, EBASE(row), HMI_IsChinese() ? F("CN") : F("EN"));
+  DWIN_Draw_String(false, Font::f8x16, Color_White, Color_Bg_Black, 226, EBASE(row), HMI_IsChinese() ? F("CN") : F("EN"));
   Draw_Menu_Icon(row, ICON_Language);
 }
 
@@ -1094,8 +1094,8 @@ void Draw_Motion_Menu() {
         DWIN_Frame_AreaCopy(1, 189, 389, 271, 402,  95, 310);
       }
       else {
-        DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, 36, 300, F("Nozzle or Bed temperature"));
-        DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, 92, 300, F("is too high"));
+        DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, 36, 300, F("Nozzle or Bed temperature"));
+        DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, 92, 300, F("is too high"));
       }
     }
     else {
@@ -1105,8 +1105,8 @@ void Draw_Motion_Menu() {
         DWIN_Frame_AreaCopy(1, 189, 389, 271, 402, 95, 310);
       }
       else {
-        DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, 36, 300, F("Nozzle or Bed temperature"));
-        DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, 92, 300, F("is too low"));
+        DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, 36, 300, F("Nozzle or Bed temperature"));
+        DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, 92, 300, F("is too low"));
       }
     }
   }
@@ -1129,7 +1129,7 @@ void Draw_Popup_Bkgd_60() {
       DWIN_ICON_Show(ICON, ICON_Confirm_C, 86, 280);
     }
     else {
-      DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, 20, 235, F("Nozzle is too cold"));
+      DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, 20, 235, F("Nozzle is too cold"));
       DWIN_ICON_Show(ICON, ICON_Confirm_E, 86, 280);
     }
   }
@@ -1146,9 +1146,9 @@ void Popup_Window_Resume() {
     DWIN_ICON_Show(ICON, ICON_Continue_C, 146, 307);
   }
   else {
-    DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 14) / 2, 115, F("Continue Print"));
-    DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 22) / 2, 192, F("It looks like the last"));
-    DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 22) / 2, 212, F("file was interrupted."));
+    DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 14) / 2, 115, F("Continue Print"));
+    DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 22) / 2, 192, F("It looks like the last"));
+    DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 22) / 2, 212, F("file was interrupted."));
     DWIN_ICON_Show(ICON, ICON_Cancel_E,    26, 307);
     DWIN_ICON_Show(ICON, ICON_Continue_E, 146, 307);
   }
@@ -1164,8 +1164,8 @@ void Popup_Window_Home(const bool parking/*=false*/) {
     DWIN_Frame_AreaCopy(1, 0, 389, 150, 402, 61, 280);
   }
   else {
-    DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * (parking ? 7 : 10)) / 2, 230, parking ? F("Parking") : F("Homing XYZ"));
-    DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 23) / 2, 260, F("Please wait until done."));
+    DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * (parking ? 7 : 10)) / 2, 230, parking ? F("Parking") : F("Homing XYZ"));
+    DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 23) / 2, 260, F("Please wait until done."));
   }
 }
 
@@ -1180,8 +1180,8 @@ void Popup_Window_Home(const bool parking/*=false*/) {
       DWIN_Frame_AreaCopy(1, 0, 389, 150, 402, 61, 280);
     }
     else {
-      DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 13) / 2, 230, GET_TEXT_F(MSG_BED_LEVELING));
-      DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 23) / 2, 260, F("Please wait until done."));
+      DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 13) / 2, 230, GET_TEXT_F(MSG_BED_LEVELING));
+      DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 23) / 2, 260, F("Please wait until done."));
     }
   }
 
@@ -1208,8 +1208,8 @@ void Popup_window_PauseOrStop() {
     DWIN_ICON_Show(ICON, ICON_Cancel_C, 146, 280);
   }
   else {
-         if (select_print.now == PRINT_PAUSE_RESUME) DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 11) / 2, 150, GET_TEXT_F(MSG_PAUSE_PRINT));
-    else if (select_print.now == PRINT_STOP) DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 10) / 2, 150, GET_TEXT_F(MSG_STOP_PRINT));
+         if (select_print.now == PRINT_PAUSE_RESUME) DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 11) / 2, 150, GET_TEXT_F(MSG_PAUSE_PRINT));
+    else if (select_print.now == PRINT_STOP) DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, (272 - 8 * 10) / 2, 150, GET_TEXT_F(MSG_STOP_PRINT));
     DWIN_ICON_Show(ICON, ICON_Confirm_E, 26, 280);
     DWIN_ICON_Show(ICON, ICON_Cancel_E, 146, 280);
   }
@@ -1234,23 +1234,23 @@ void Draw_Print_ProgressBar() {
   constexpr uint16_t y = 93, h = 21;
   DWIN_ICON_Show(ICON, ICON_Bar, 15, 93);
   DWIN_Draw_Rectangle(1, BarFill_Color, 16 + _card_percent * 240 / 100, y, 256, y + h - 1);
-  DWIN_Draw_IntValue(true, true, 0, font8x16, Percent_Color, Color_Bg_Black, 2, 117, y + 40, _card_percent);
-  DWIN_Draw_String(false, font8x16, Percent_Color, Color_Bg_Black, 133, y + 40, F("%"));
+  DWIN_Draw_IntValue(true, true, 0, Font::f8x16, Percent_Color, Color_Bg_Black, 2, 117, y + 40, _card_percent);
+  DWIN_Draw_String(false, Font::f8x16, Percent_Color, Color_Bg_Black, 133, y + 40, F("%"));
 }
 
 void Draw_Print_ProgressElapsed() {
   constexpr uint16_t x = 45, y = 192;
   duration_t elapsed = print_job_timer.duration(); // print timer
-  DWIN_Draw_IntValue(true, true, 1, font8x16, Color_White, Color_Bg_Black, 2, x, y, elapsed.value / 3600);
-  DWIN_Draw_String(false, font8x16, Color_White, Color_Bg_Black, x + 8 * 2, y, F(":"));
-  DWIN_Draw_IntValue(true, true, 1, font8x16, Color_White, Color_Bg_Black, 2, x + 8 * 3, y, (elapsed.value % 3600) / 60);
+  DWIN_Draw_IntValue(true, true, 1, Font::f8x16, Color_White, Color_Bg_Black, 2, x, y, elapsed.value / 3600);
+  DWIN_Draw_String(false, Font::f8x16, Color_White, Color_Bg_Black, x + 8 * 2, y, F(":"));
+  DWIN_Draw_IntValue(true, true, 1, Font::f8x16, Color_White, Color_Bg_Black, 2, x + 8 * 3, y, (elapsed.value % 3600) / 60);
 }
 
 void Draw_Print_ProgressRemain() {
   constexpr uint16_t x = 179, y = 192;
-  DWIN_Draw_IntValue(true, true, 1, font8x16, Color_White, Color_Bg_Black, 2, x, y, _remain_time / 3600);
-  DWIN_Draw_String(false, font8x16, Color_White, Color_Bg_Black, x + 8 * 2, y, F(":"));
-  DWIN_Draw_IntValue(true, true, 1, font8x16, Color_White, Color_Bg_Black, 2, x + 8 * 3, y, (_remain_time % 3600) / 60);
+  DWIN_Draw_IntValue(true, true, 1, Font::f8x16, Color_White, Color_Bg_Black, 2, x, y, _remain_time / 3600);
+  DWIN_Draw_String(false, Font::f8x16, Color_White, Color_Bg_Black, x + 8 * 2, y, F(":"));
+  DWIN_Draw_IntValue(true, true, 1, Font::f8x16, Color_White, Color_Bg_Black, 2, x + 8 * 3, y, (_remain_time % 3600) / 60);
 }
 
 void Goto_PrintProcess() {
@@ -1266,7 +1266,7 @@ void Goto_PrintProcess() {
   // Copy into filebuf string before entry
   char * const name = card.longest_filename();
   const int8_t npos = _MAX(0U, DWIN_WIDTH - strlen(name) * MENU_CHR_W) / 2;
-  DWIN_Draw_String(false, font8x16, Color_White, Color_Bg_Black, npos, 60, name);
+  DWIN_Draw_String(false, Font::f8x16, Color_White, Color_Bg_Black, npos, 60, name);
 
   DWIN_ICON_Show(ICON, ICON_PrintTime,   17, 163);
   DWIN_ICON_Show(ICON, ICON_RemainTime, 150, 161);
@@ -1671,11 +1671,11 @@ void _update_axis_value(const AxisEnum axis, const uint16_t x, const uint16_t y,
 
   if (force || changed || draw_qmark || draw_empty) {
     if (blink && draw_qmark)
-      DWIN_Draw_String(true, font8x16, Color_White, Color_Bg_Black, x, y, F("???.?"));
+      DWIN_Draw_String(true, Font::f8x16, Color_White, Color_Bg_Black, x, y, F("???.?"));
     else if (blink && draw_empty)
-      DWIN_Draw_String(true, font8x16, Color_White, Color_Bg_Black, x, y, F("     "));
+      DWIN_Draw_String(true, Font::f8x16, Color_White, Color_Bg_Black, x, y, F("     "));
     else
-      DWIN_Draw_FloatValue(true, true, 0, font8x16, Color_White, Color_Bg_Black, 3, 1, x, y, p);
+      DWIN_Draw_FloatValue(true, true, 0, Font::f8x16, Color_White, Color_Bg_Black, 3, 1, x, y, p);
   }
 }
 
@@ -1786,11 +1786,11 @@ void update_variable() {
     _offset = BABY_Z_VAR;
     if (BABY_Z_VAR < 0) {
       Draw_Stat_Float(207, 417, -_offset);
-      DWIN_Draw_String(true, font8x16, Color_White, Color_Bg_Black, 205, 419, F("-"));
+      DWIN_Draw_String(true, Font::f8x16, Color_White, Color_Bg_Black, 205, 419, F("-"));
     }
     else {
       Draw_Stat_Float(207, 417, _offset);
-      DWIN_Draw_String(true, font8x16, Color_White, Color_Bg_Black, 205, 419, F(" "));
+      DWIN_Draw_String(true, Font::f8x16, Color_White, Color_Bg_Black, 205, 419, F(" "));
     }
   }
 
@@ -1935,7 +1935,7 @@ void Redraw_SD_List() {
   }
   else {
     DWIN_Draw_Rectangle(1, Color_Bg_Red, 10, MBASE(3) - 10, DWIN_WIDTH - 10, MBASE(4));
-    DWIN_Draw_String(false, font16x32, Color_Yellow, Color_Bg_Red, ((DWIN_WIDTH) - 8 * 16) / 2, MBASE(3), F("No Media"));
+    DWIN_Draw_String(false, Font::f16x32, Color_Yellow, Color_Bg_Red, ((DWIN_WIDTH) - 8 * 16) / 2, MBASE(3), F("No Media"));
   }
 }
 
@@ -2023,11 +2023,11 @@ void Draw_Status_Area(const bool with_update) {
 
   if (BABY_Z_VAR < 0) {
     Draw_Stat_Float(207, 417, -BABY_Z_VAR * 100);
-    DWIN_Draw_String(true, font8x16, Color_White, Color_Bg_Black, 205, 419, F("-"));
+    DWIN_Draw_String(true, Font::f8x16, Color_White, Color_Bg_Black, 205, 419, F("-"));
   }
   else {
     Draw_Stat_Float(207, 417, BABY_Z_VAR * 100);
-    DWIN_Draw_String(true, font8x16, Color_White, Color_Bg_Black, 205, 419, F(" "));
+    DWIN_Draw_String(true, Font::f8x16, Color_White, Color_Bg_Black, 205, 419, F(" "));
   }
 
   DWIN_Draw_Rectangle(1, Line_Color, 0, 449, DWIN_WIDTH, 451);
@@ -2051,8 +2051,8 @@ void HMI_StartFrame(const bool with_update) {
 void Draw_Info_Menu() {
   Clear_Main_Window();
 
-  DWIN_Draw_String(false, font8x16, Color_White, Color_Bg_Black, (DWIN_WIDTH - strlen(MACHINE_SIZE) * MENU_CHR_W) / 2, 122, F(MACHINE_SIZE));
-  DWIN_Draw_String(false, font8x16, Color_White, Color_Bg_Black, (DWIN_WIDTH - strlen(SHORT_BUILD_VERSION) * MENU_CHR_W) / 2, 195, F(SHORT_BUILD_VERSION));
+  DWIN_Draw_String(false, Font::f8x16, Color_White, Color_Bg_Black, (DWIN_WIDTH - strlen(MACHINE_SIZE) * MENU_CHR_W) / 2, 122, F(MACHINE_SIZE));
+  DWIN_Draw_String(false, Font::f8x16, Color_White, Color_Bg_Black, (DWIN_WIDTH - strlen(SHORT_BUILD_VERSION) * MENU_CHR_W) / 2, 195, F(SHORT_BUILD_VERSION));
 
   if (HMI_IsChinese()) {
     DWIN_Frame_TitleCopy(30, 17, 28, 13);                   // "Info"
@@ -2072,7 +2072,7 @@ void Draw_Info_Menu() {
     DWIN_Frame_AreaCopy(1, 146, 151, 254, 161,  82, 175);   // "Firmware Version"
     DWIN_Frame_AreaCopy(1,   1, 164,  96, 175,  89, 248);   // "Contact details"
   }
-  DWIN_Draw_String(false, font8x16, Color_White, Color_Bg_Black, (DWIN_WIDTH - strlen(CORP_WEBSITE) * MENU_CHR_W) / 2, 268, F(CORP_WEBSITE));
+  DWIN_Draw_String(false, Font::f8x16, Color_White, Color_Bg_Black, (DWIN_WIDTH - strlen(CORP_WEBSITE) * MENU_CHR_W) / 2, 268, F(CORP_WEBSITE));
 
   Draw_Back_First();
   LOOP_L_N(i, 3) {
@@ -4192,7 +4192,7 @@ void EachMomentUpdate() {
 
       char * const name = card.longest_filename();
       const int8_t npos = _MAX(0U, DWIN_WIDTH - strlen(name) * (MENU_CHR_W)) / 2;
-      DWIN_Draw_String(true, font8x16, Popup_Text_Color, Color_Bg_Window, npos, 252, name);
+      DWIN_Draw_String(true, Font::f8x16, Popup_Text_Color, Color_Bg_Window, npos, 252, name);
       DWIN_UpdateLCD();
 
       bool recovery_flag = true;
@@ -4312,7 +4312,7 @@ void DWIN_CompletedLeveling() {
 void DWIN_StatusChanged(const char * const cstr/*=nullptr*/) {
   DWIN_Draw_Rectangle(1, Color_Bg_Blue, 0, STATUS_Y, DWIN_WIDTH, STATUS_Y + 24);
   const int8_t x = _MAX(0U, DWIN_WIDTH - strlen(cstr) * MENU_CHR_W) / 2;
-  DWIN_Draw_String(false, font8x16, Color_White, Color_Bg_Blue, x, STATUS_Y + 3, cstr);
+  DWIN_Draw_String(false, Font::f8x16, Color_White, Color_Bg_Blue, x, STATUS_Y + 3, cstr);
   DWIN_UpdateLCD();
 }
 

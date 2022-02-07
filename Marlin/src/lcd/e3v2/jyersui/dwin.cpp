@@ -86,9 +86,9 @@
    #define CORP_WEBSITE WEBSITE_URL
  #endif
 
-#define DWIN_FONT_MENU font8x16
-#define DWIN_FONT_STAT font10x20
-#define DWIN_FONT_HEAD font10x20
+static const constexpr Font DWIN_FONT_MENU = Font::f8x16;
+static const constexpr Font DWIN_FONT_STAT = Font::f10x20;
+static const constexpr Font DWIN_FONT_HEAD = Font::f10x20;
 
 #define MENU_CHAR_LIMIT  24
 #define STATUS_Y 352
@@ -348,7 +348,7 @@ CrealityDWINClass CrealityDWIN;
         if (viewer_print_value) {
           int8_t offset_x, offset_y = cell_height_px / 2 - 6;
           if (isnan(Z_VALUES_ARR[x][y])) {  // undefined
-            DWIN_Draw_String(false, font6x12, Color_White, Color_Bg_Blue, start_x_px + cell_width_px / 2 - 5, start_y_px + offset_y, F("X"));
+            DWIN_Draw_String(false, Font::f6x12, Color_White, Color_Bg_Blue, start_x_px + cell_width_px / 2 - 5, start_y_px + offset_y, F("X"));
           }
           else {                          // has value
             if (GRID_MAX_POINTS_X < 10)
@@ -357,8 +357,8 @@ CrealityDWINClass CrealityDWIN;
               sprintf_P(buf, PSTR("%02i"), (uint16_t)(abs(Z_VALUES_ARR[x][y] - (int16_t)Z_VALUES_ARR[x][y]) * 100));
             offset_x = cell_width_px / 2 - 3 * (strlen(buf)) - 2;
             if (!(GRID_MAX_POINTS_X < 10))
-              DWIN_Draw_String(false, font6x12, Color_White, Color_Bg_Blue, start_x_px - 2 + offset_x, start_y_px + offset_y /*+ square / 2 - 6*/, F("."));
-            DWIN_Draw_String(false, font6x12, Color_White, Color_Bg_Blue, start_x_px + 1 + offset_x, start_y_px + offset_y /*+ square / 2 - 6*/, buf);
+              DWIN_Draw_String(false, Font::f6x12, Color_White, Color_Bg_Blue, start_x_px - 2 + offset_x, start_y_px + offset_y /*+ square / 2 - 6*/, F("."));
+            DWIN_Draw_String(false, Font::f6x12, Color_White, Color_Bg_Blue, start_x_px + 1 + offset_x, start_y_px + offset_y /*+ square / 2 - 6*/, buf);
           }
           safe_delay(10);
           LCD_SERIAL.flushTX();
@@ -786,7 +786,7 @@ void CrealityDWINClass::Draw_SD_List(bool removed/*=false*/) {
   else {
     Draw_Menu_Item(0, ICON_Back, F("Back"));
     DWIN_Draw_Rectangle(1, Color_Bg_Red, 10, MBASE(3) - 10, DWIN_WIDTH - 10, MBASE(4));
-    DWIN_Draw_String(false, font16x32, Color_Yellow, Color_Bg_Red, ((DWIN_WIDTH) - 8 * 16) / 2, MBASE(3), F("No Media"));
+    DWIN_Draw_String(false, Font::f16x32, Color_Yellow, Color_Bg_Red, ((DWIN_WIDTH) - 8 * 16) / 2, MBASE(3), F("No Media"));
   }
   DWIN_Draw_Rectangle(1, GetColor(eeprom_settings.cursor_color, Rectangle_Color), 0, MBASE(0) - 18, 14, MBASE(0) + 33);
 }

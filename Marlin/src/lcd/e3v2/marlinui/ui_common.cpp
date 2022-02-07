@@ -49,26 +49,12 @@
 
 // DWIN printing specifies the font on each string operation
 // but we'll make the font modal for Marlin
-dwin_font_t dwin_font = { font8x16, 8, 16, Color_White, Color_Bg_Black, true };
-void MarlinUI::set_font(const uint8_t font_nr) {
+dwin_font_t dwin_font = { Font::f8x16, 8, 16, Color_White, Color_Bg_Black, true };
+void MarlinUI::set_font(const Font font_nr) {
   if (font_nr != dwin_font.index) {
     dwin_font.index = font_nr;
-    uint8_t w, h;
-    switch (font_nr) {
-      default:
-      case font6x12:  w =  6; h = 12; break;
-      case font8x16:  w =  8; h = 16; break;
-      case font10x20: w = 10; h = 20; break;
-      case font12x24: w = 12; h = 24; break;
-      case font14x28: w = 14; h = 28; break;
-      case font16x32: w = 16; h = 32; break;
-      case font20x40: w = 20; h = 40; break;
-      case font24x48: w = 24; h = 48; break;
-      case font28x56: w = 28; h = 56; break;
-      case font32x64: w = 32; h = 64; break;
-    }
-    dwin_font.width = w;
-    dwin_font.height = h;
+    dwin_font.width = font_nr.width();
+    dwin_font.height = font_nr.height();
     // TODO: Array with dimensions, auto fit menu items,
     // update char width / height of the screen based on
     // new (fixed-width) font size.
@@ -121,7 +107,7 @@ void MarlinUI::clear_lcd() {
       DWIN_ICON_Show(BOOT_ICON, ICON_Copyright,  INFO_CENTER - 126 / 2, 200);
     #endif
 
-    DWIN_Draw_String(false, font10x20, Color_Yellow, Color_Bg_Black, INFO_CENTER - (dwin_string.length() * 10) / 2, VERSION_Y, S(dwin_string.string()));
+    DWIN_Draw_String(false, Font::f10x20, Color_Yellow, Color_Bg_Black, INFO_CENTER - (dwin_string.length() * 10) / 2, VERSION_Y, S(dwin_string.string()));
     DWIN_UpdateLCD();
   }
 
@@ -404,7 +390,7 @@ void MarlinUI::draw_status_message(const bool blink) {
       dwin_string.add(value);
 
       const dwin_coord_t by = (row * MENU_LINE_HEIGHT) + MENU_FONT_HEIGHT + EXTRA_ROW_HEIGHT / 2;
-      DWIN_Draw_String(true, font16x32, Color_Yellow, Color_Bg_Black, (LCD_PIXEL_WIDTH - vallen * 16) / 2, by, S(dwin_string.string()));
+      DWIN_Draw_String(true, Font::f16x32, Color_Yellow, Color_Bg_Black, (LCD_PIXEL_WIDTH - vallen * 16) / 2, by, S(dwin_string.string()));
 
       extern screenFunc_t _manual_move_func_ptr;
       if (ui.currentScreen != _manual_move_func_ptr && !ui.external_control) {

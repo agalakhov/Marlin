@@ -52,7 +52,7 @@ void MeshViewerClass::Draw() {
   #define px(xp) (mx + (xp) * stx)
   #define py(yp) (30 + DWIN_WIDTH - my - (yp) * sty)
   #define rm(z) ((z - minz) * (rmax - rmin) / _MAX(1, (maxz - minz)) + rmin)
-  #define DrawMeshValue(xp, yp, zv) DWINUI::Draw_Signed_Float(font6x12, 1, 2, px(xp) - 12, py(yp) - 6, zv)
+  #define DrawMeshValue(xp, yp, zv) DWINUI::Draw_Signed_Float(Font::f6x12, 1, 2, px(xp) - 12, py(yp) - 6, zv)
   #define DrawMeshHLine(yp) DWIN_Draw_HLine(HMI_data.SplitLine_Color, px(0), py(yp), DWIN_WIDTH - 2 * mx)
   #define DrawMeshVLine(xp) DWIN_Draw_VLine(HMI_data.SplitLine_Color, px(xp), py(GRID_MAX_POINTS_Y - 1), DWIN_WIDTH - 2 * my)
   GRID_LOOP(x, y) {
@@ -74,29 +74,29 @@ void MeshViewerClass::Draw() {
       uint8_t radius = rm(zmesh[x][y]);
       DWINUI::Draw_FillCircle(color, px(x), py(y), radius);
       if (GRID_MAX_POINTS_X < 9)
-        DWINUI::Draw_Signed_Float(font6x12, 1, 2, px(x) - 12, py(y) - 6, Z_VALUES(x,y));
+        DWINUI::Draw_Signed_Float(Font::f6x12, 1, 2, px(x) - 12, py(y) - 6, Z_VALUES(x,y));
       else {
         char str_1[9];
         str_1[0] = 0;
         switch (zmesh[x][y]) {
           case -999 ... -100:
-            DWINUI::Draw_Signed_Float(font6x12, 1, 1, px(x) - 12, py(y) - 6, Z_VALUES(x,y));
+            DWINUI::Draw_Signed_Float(Font::f6x12, 1, 1, px(x) - 12, py(y) - 6, Z_VALUES(x,y));
             break;
           case -99 ... -1:
             sprintf_P(str_1, PSTR("-.%02i"), -zmesh[x][y]);
             break;
           case 0:
-            DWIN_Draw_String(false, font6x12, DWINUI::textcolor, DWINUI::backcolor, px(x) - 4, py(y) - 6, "0");;
+            DWIN_Draw_String(false, Font::f6x12, DWINUI::textcolor, DWINUI::backcolor, px(x) - 4, py(y) - 6, "0");;
             break;
           case 1 ... 99:
             sprintf_P(str_1, PSTR(".%02i"), zmesh[x][y]);
             break;
           case 100 ... 999:
-            DWINUI::Draw_Signed_Float(font6x12, 1, 1, px(x) - 12, py(y) - 6, Z_VALUES(x,y));
+            DWINUI::Draw_Signed_Float(Font::f6x12, 1, 1, px(x) - 12, py(y) - 6, Z_VALUES(x,y));
             break;
         }
         if (str_1[0])
-          DWIN_Draw_String(false, font6x12, DWINUI::textcolor, DWINUI::backcolor, px(x) - 12, py(y) - 6, str_1);
+          DWIN_Draw_String(false, Font::f6x12, DWINUI::textcolor, DWINUI::backcolor, px(x) - 12, py(y) - 6, str_1);
       }
     }
   }
