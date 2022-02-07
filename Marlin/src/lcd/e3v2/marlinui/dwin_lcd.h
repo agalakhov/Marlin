@@ -67,9 +67,9 @@
 
 #include "../common/dwin_font.h"
 
-#define DWIN_FONT_MENU  font10x20
-#define DWIN_FONT_STAT  font14x28
-#define DWIN_FONT_ALERT font14x28
+static const constexpr Font DWIN_FONT_MENU = Font::f10x20;
+static const constexpr Font DWIN_FONT_STAT  = Font::f14x28;
+static const constexpr Font DWIN_FONT_ALERT = Font::f14x28;
 
 #include "../common/dwin_color.h"
 

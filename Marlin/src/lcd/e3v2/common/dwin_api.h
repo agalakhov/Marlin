@@ -23,6 +23,8 @@
 
 #include "../../../inc/MarlinConfig.h"
 
+#include "dwin_font.h"
+
 #if ENABLED(DWIN_MARLINUI_LANDSCAPE)
   #define DWIN_WIDTH  480
   #define DWIN_HEIGHT 272
@@ -167,45 +169,45 @@ void DWIN_Frame_AreaMove(uint8_t mode, uint8_t dir, uint16_t dis,
 
 // Draw a string
 //  bShow: true=display background color; false=don't display background color
-//  size: Font size
+//  font: Font
 //  color: Character color
 //  bColor: Background color
 //  x/y: Upper-left coordinate of the string
 //  *string: The string
 //  rlimit: For draw less chars than string length use rlimit
-void DWIN_Draw_String(bool bShow, uint8_t size, uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, const char * const string, uint16_t rlimit=0xFFFF);
+void DWIN_Draw_String(bool bShow, Font font, uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, const char * const string, uint16_t rlimit=0xFFFF);
 
-inline void DWIN_Draw_String(bool bShow, uint8_t size, uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, FSTR_P const ftitle) {
+inline void DWIN_Draw_String(bool bShow, Font font, uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, FSTR_P const ftitle) {
   char ctitle[strlen_P(FTOP(ftitle)) + 1];
   strcpy_P(ctitle, FTOP(ftitle));
-  DWIN_Draw_String(bShow, size, color, bColor, x, y, ctitle);
+  DWIN_Draw_String(bShow, font, color, bColor, x, y, ctitle);
 }
 
 // Draw a positive integer
 //  bShow: true=display background color; false=don't display background color
 //  zeroFill: true=zero fill; false=no zero fill
 //  zeroMode: 1=leading 0 displayed as 0; 0=leading 0 displayed as a space
-//  size: Font size
+//  font: Font
 //  color: Character color
 //  bColor: Background color
 //  iNum: Number of digits
 //  x/y: Upper-left coordinate
 //  value: Integer value
-void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t size, uint16_t color,
+void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font font, uint16_t color,
                           uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, uint32_t value);
 
 // Draw a floating point number
 //  bShow: true=display background color; false=don't display background color
 //  zeroFill: true=zero fill; false=no zero fill
 //  zeroMode: 1=leading 0 displayed as 0; 0=leading 0 displayed as a space
-//  size: Font size
+//  font: Font
 //  color: Character color
 //  bColor: Background color
 //  iNum: Number of whole digits
 //  fNum: Number of decimal digits
 //  x/y: Upper-left point
 //  value: Float value
-void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t size, uint16_t color,
+void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font font, uint16_t color,
                             uint16_t bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, int32_t value);
 
 // Draw a floating point number

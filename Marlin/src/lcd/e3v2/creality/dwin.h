@@ -198,7 +198,7 @@ void HMI_StepXYZE();
 void HMI_SetLanguageCache();
 
 void update_variable();
-void DWIN_Draw_Signed_Float(uint8_t size, uint16_t bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, long value);
+void DWIN_Draw_Signed_Float(Font font, uint16_t bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, long value);
 
 // SD Card
 void HMI_SDCardInit();

@@ -66,7 +66,7 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
   if (!ui.did_first_redraw) {
     dwin_string.set();
     dwin_string.add('X' + axis);
-    DWIN_Draw_String(true, font16x32, Color_IconBlue, Color_Bg_Black, x + (vallen * 14 - 14) / 2, y + 2, S(dwin_string.string()));
+    DWIN_Draw_String(true, Font::f16x32, Color_IconBlue, Color_Bg_Black, x + (vallen * 14 - 14) / 2, y + 2, S(dwin_string.string()));
   }
 
   dwin_string.set();
@@ -89,7 +89,7 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
   if (BOTH(DWIN_MARLINUI_PORTRAIT, LCD_SHOW_E_TOTAL) && axis == X_AXIS)
     dwin_string.add("   ");
 
-  DWIN_Draw_String(true, font14x28, Color_White, Color_Bg_Black, x, y + 32, S(dwin_string.string()));
+  DWIN_Draw_String(true, Font::f14x28, Color_White, Color_Bg_Black, x, y + 32, S(dwin_string.string()));
 }
 
 #if ENABLED(LCD_SHOW_E_TOTAL)
@@ -100,14 +100,14 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
     if (!ui.did_first_redraw) {
       // Extra spaces so we don't have to clear the 'Y' label separately
       dwin_string.set("E         ");
-      DWIN_Draw_String(true, font16x32, Color_IconBlue, Color_Bg_Black, x + (4 * 14 / 2) - 7, y + 2, S(dwin_string.string()));
+      DWIN_Draw_String(true, Font::f16x32, Color_IconBlue, Color_Bg_Black, x + (4 * 14 / 2) - 7, y + 2, S(dwin_string.string()));
     }
 
     dwin_string.set(ui16tostr5rj(value / scale));
-    DWIN_Draw_String(true, font14x28, Color_White, Color_Bg_Black, x, y + 32, S(dwin_string.string()));
+    DWIN_Draw_String(true, Font::f14x28, Color_White, Color_Bg_Black, x, y + 32, S(dwin_string.string()));
 
     // Extra spaces so we don't have to clear out the Y value separately
-    DWIN_Draw_String(true, font14x28, Color_IconBlue, Color_Bg_Black, x + (5 * 14), y + 32, S(scale == 1 ? "mm      " : "cm      "));
+    DWIN_Draw_String(true, Font::f14x28, Color_IconBlue, Color_Bg_Black, x + (5 * 14), y + 32, S(scale == 1 ? "mm      " : "cm      "));
   }
 
 #endif
@@ -123,12 +123,12 @@ FORCE_INLINE void _draw_fan_status(const uint16_t x, const uint16_t y) {
     DWIN_ICON_Animation(0, fan_on, ICON, ICON_Fan0, ICON_Fan3, x + fanx, y, 25);
     dwin_string.set(i8tostr3rj(fan_pct));
     dwin_string.add('%');
-    DWIN_Draw_String(true, font14x28, Color_White, Color_Bg_Black, x, y + STATUS_FAN_HEIGHT, S(dwin_string.string()));
+    DWIN_Draw_String(true, Font::f14x28, Color_White, Color_Bg_Black, x, y + STATUS_FAN_HEIGHT, S(dwin_string.string()));
   }
   else {
     DWIN_ICON_Show(ICON, ICON_Fan0, x + fanx, y);
     dwin_string.set(PSTR("    "));
-    DWIN_Draw_String(true, font14x28, Color_White, Color_Bg_Black, x, y + STATUS_FAN_HEIGHT, S(dwin_string.string()));
+    DWIN_Draw_String(true, Font::f14x28, Color_White, Color_Bg_Black, x, y + STATUS_FAN_HEIGHT, S(dwin_string.string()));
   }
 }
 
@@ -182,7 +182,7 @@ FORCE_INLINE void _draw_heater_status(const heater_id_t heater, const uint16_t x
   if (!ui.did_first_redraw || t_draw) {
     dwin_string.set(i16tostr3rj(tt + 0.5));
     dwin_string.add(LCD_STR_DEGREE);
-    DWIN_Draw_String(true, font14x28, Color_White, Color_Bg_Black, x, y, S(dwin_string.string()));
+    DWIN_Draw_String(true, Font::f14x28, Color_White, Color_Bg_Black, x, y, S(dwin_string.string()));
   }
 
   if (!ui.did_first_redraw || i_draw)
@@ -191,7 +191,7 @@ FORCE_INLINE void _draw_heater_status(const heater_id_t heater, const uint16_t x
   if (!ui.did_first_redraw || c_draw) {
     dwin_string.set(i16tostr3rj(tc + 0.5));
     dwin_string.add(LCD_STR_DEGREE);
-    DWIN_Draw_String(true, font14x28, Color_White, Color_Bg_Black, x, y + 70, S(dwin_string.string()));
+    DWIN_Draw_String(true, Font::f14x28, Color_White, Color_Bg_Black, x, y + 70, S(dwin_string.string()));
   }
 }
 
@@ -201,12 +201,12 @@ FORCE_INLINE void _draw_heater_status(const heater_id_t heater, const uint16_t x
 FORCE_INLINE void _draw_feedrate_status(const char *value, uint16_t x, uint16_t y) {
   if (!ui.did_first_redraw) {
     dwin_string.set(LCD_STR_FEEDRATE);
-    DWIN_Draw_String(true, font14x28, Color_IconBlue, Color_Bg_Black, x, y, S(dwin_string.string()));
+    DWIN_Draw_String(true, Font::f14x28, Color_IconBlue, Color_Bg_Black, x, y, S(dwin_string.string()));
   }
 
   dwin_string.set(value);
   dwin_string.add(PSTR("%"));
-  DWIN_Draw_String(true, font14x28, Color_White, Color_Bg_Black, x + 14, y, S(dwin_string.string()));
+  DWIN_Draw_String(true, Font::f14x28, Color_White, Color_Bg_Black, x + 14, y, S(dwin_string.string()));
 }
 
 /**
@@ -308,7 +308,7 @@ void MarlinUI::draw_status_screen() {
     time.toDigital(buffer);
     dwin_string.add(prefix);
     dwin_string.add(buffer);
-    DWIN_Draw_String(true, font14x28, Color_White, Color_Bg_Black, (LCD_PIXEL_WIDTH - ((dwin_string.length() + 1) * 14)), 290, S(dwin_string.string()));
+    DWIN_Draw_String(true, Font::f14x28, Color_White, Color_Bg_Black, (LCD_PIXEL_WIDTH - ((dwin_string.length() + 1) * 14)), 290, S(dwin_string.string()));
 
   #else
 
@@ -317,25 +317,25 @@ void MarlinUI::draw_status_screen() {
     time.toDigital(buffer);
     dwin_string.set(" ");
     dwin_string.add(buffer);
-    DWIN_Draw_String(true, font14x28, Color_White, Color_Bg_Black, 280, 100, S(dwin_string.string()));
+    DWIN_Draw_String(true, Font::f14x28, Color_White, Color_Bg_Black, 280, 100, S(dwin_string.string()));
 
     #if ENABLED(LCD_SHOW_E_TOTAL)
       if (show_e_total && TERN1(SHOW_REMAINING_TIME, !blink)) { // if SHOW_REMAINING_TIME is also
         const uint8_t escale = e_move_accumulator >= 100000.0f ? 10 : 1; // show cm after 99,000mm
 
-        DWIN_Draw_String(true, font14x28, Color_IconBlue, Color_Bg_Black, 249, 135, S("E"));
+        DWIN_Draw_String(true, Font::f14x28, Color_IconBlue, Color_Bg_Black, 249, 135, S("E"));
         dwin_string.set(ui16tostr5rj(e_move_accumulator * escale));
-        DWIN_Draw_String(true, font14x28, Color_White, Color_Bg_Black, 263, 135, S(dwin_string.string()));
-        DWIN_Draw_String(true, font14x28, Color_IconBlue, Color_Bg_Black, 333, 135, S(escale==1 ? "mm" : "cm"));
+        DWIN_Draw_String(true, Font::f14x28, Color_White, Color_Bg_Black, 263, 135, S(dwin_string.string()));
+        DWIN_Draw_String(true, Font::f14x28, Color_IconBlue, Color_Bg_Black, 333, 135, S(escale==1 ? "mm" : "cm"));
       }
     #endif
     #if ENABLED(SHOW_REMAINING_TIME)
       if (!show_e_total || blink) {
-        DWIN_Draw_String(true, font14x28, Color_IconBlue, Color_Bg_Black, 249, 135, S(" R "));
+        DWIN_Draw_String(true, Font::f14x28, Color_IconBlue, Color_Bg_Black, 249, 135, S(" R "));
         time = get_remaining_time();
         time.toDigital(buffer);
         dwin_string.set(buffer);
-        DWIN_Draw_String(true, font14x28, Color_White, Color_Bg_Black, 291, 135, S(dwin_string.string()));
+        DWIN_Draw_String(true, Font::f14x28, Color_White, Color_Bg_Black, 291, 135, S(dwin_string.string()));
       }
     #endif
   #endif
@@ -369,7 +369,7 @@ void MarlinUI::draw_status_screen() {
       dwin_string.set(TERN(PRINT_PROGRESS_SHOW_DECIMALS, permyriadtostr4(progress), ui8tostr3rj(progress / (PROGRESS_SCALE))));
       dwin_string.add(PSTR("%"));
       DWIN_Draw_String(
-        false, font16x32, Percent_Color, Color_Bg_Black,
+        false, Font::f16x32, Percent_Color, Color_Bg_Black,
         pb_left + (pb_width - dwin_string.length() * 16) / 2,
         pb_top + (pb_height - 32) / 2,
         S(dwin_string.string())
