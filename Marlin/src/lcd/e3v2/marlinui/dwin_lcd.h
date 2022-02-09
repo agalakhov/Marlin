@@ -73,7 +73,7 @@ static const constexpr Font DWIN_FONT_ALERT = Font::f14x28;
 
 #include "../common/dwin_color.h"
 
-#define Color_Bg_Heading  0x3344  // Static Heading
+static const constexpr Color Color_Bg_Heading = { 0x06, 0x1a, 0x04 }; // Static Heading
 
 // Character matrix width x height
 //#define LCD_WIDTH ((DWIN_WIDTH) / 8)

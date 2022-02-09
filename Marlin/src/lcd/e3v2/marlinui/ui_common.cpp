@@ -49,7 +49,7 @@
 
 // DWIN printing specifies the font on each string operation
 // but we'll make the font modal for Marlin
-dwin_font_t dwin_font = { Font::f8x16, 8, 16, Color_White, Color_Bg_Black, true };
+dwin_font_t dwin_font = { Font::f8x16, 8, 16, StdColor::White, Color_Bg_Black, true };
 void MarlinUI::set_font(const Font font_nr) {
   if (font_nr != dwin_font.index) {
     dwin_font.index = font_nr;
@@ -107,7 +107,7 @@ void MarlinUI::clear_lcd() {
       DWIN_ICON_Show(BOOT_ICON, ICON_Copyright,  INFO_CENTER - 126 / 2, 200);
     #endif
 
-    DWIN_Draw_String(false, Font::f10x20, Color_Yellow, Color_Bg_Black, INFO_CENTER - (dwin_string.length() * 10) / 2, VERSION_Y, S(dwin_string.string()));
+    DWIN_Draw_String(false, Font::f10x20, StdColor::Yellow, Color_Bg_Black, INFO_CENTER - (dwin_string.length() * 10) / 2, VERSION_Y, S(dwin_string.string()));
     DWIN_UpdateLCD();
   }
 
@@ -126,9 +126,9 @@ void MarlinUI::draw_kill_screen() {
   dwin_font.solid = false;
   DWIN_Draw_Rectangle(1, Color_Bg_Window, 20, 20, LCD_PIXEL_WIDTH - 20, LCD_PIXEL_HEIGHT - 20);
   // make the frame a few pixels thick
-  DWIN_Draw_Rectangle(0, Color_Yellow, 20, 20, LCD_PIXEL_WIDTH - 20, LCD_PIXEL_HEIGHT - 20);
-  DWIN_Draw_Rectangle(0, Color_Yellow, 21, 21, LCD_PIXEL_WIDTH - 21, LCD_PIXEL_HEIGHT - 21);
-  DWIN_Draw_Rectangle(0, Color_Yellow, 22, 22, LCD_PIXEL_WIDTH - 22, LCD_PIXEL_HEIGHT - 22);
+  DWIN_Draw_Rectangle(0, StdColor::Yellow, 20, 20, LCD_PIXEL_WIDTH - 20, LCD_PIXEL_HEIGHT - 20);
+  DWIN_Draw_Rectangle(0, StdColor::Yellow, 21, 21, LCD_PIXEL_WIDTH - 21, LCD_PIXEL_HEIGHT - 21);
+  DWIN_Draw_Rectangle(0, StdColor::Yellow, 22, 22, LCD_PIXEL_WIDTH - 22, LCD_PIXEL_HEIGHT - 22);
 
   uint8_t cx = (LCD_PIXEL_WIDTH / dwin_font.width / 2),
           cy = (LCD_PIXEL_HEIGHT / dwin_font.height / 2);
@@ -159,7 +159,7 @@ void MarlinUI::draw_kill_screen() {
 void MarlinUI::draw_status_message(const bool blink) {
   set_font(DWIN_FONT_STAT);
   dwin_font.solid = true;
-  dwin_font.fg = Color_White;
+  dwin_font.fg = StdColor::White;
   dwin_font.bg = Color_Bg_Black;
   lcd_moveto_xy(0, LCD_PIXEL_HEIGHT - (STAT_FONT_HEIGHT) - 1);
 
@@ -253,7 +253,7 @@ void MarlinUI::draw_status_message(const bool blink) {
     void MarlinUI::draw_hotend_status(const uint8_t row, const uint8_t extruder) {
 
       dwin_font.solid = false;
-      dwin_font.fg = Color_White;
+      dwin_font.fg = StdColor::White;
       dwin_string.set("E");
       dwin_string.add('1' + extruder);
       dwin_string.add(' ');
@@ -297,7 +297,7 @@ void MarlinUI::draw_status_message(const bool blink) {
     if (mark_as_selected(row, (bool)(style & SS_INVERT), true)) {
       ui.set_font(DWIN_FONT_MENU);
       dwin_font.solid = false;
-      dwin_font.fg = Color_White;
+      dwin_font.fg = StdColor::White;
 
       dwin_string.set();
       const int8_t plen = pstr ? utf8_strlen_P(pstr) : 0,
@@ -324,7 +324,7 @@ void MarlinUI::draw_status_message(const bool blink) {
     if (mark_as_selected(row, sel)) {
       ui.set_font(DWIN_FONT_MENU);
       dwin_font.solid = false;
-      dwin_font.fg = Color_White;
+      dwin_font.fg = StdColor::White;
 
       dwin_string.set(pstr, itemIndex, itemString);
 
@@ -345,7 +345,7 @@ void MarlinUI::draw_status_message(const bool blink) {
     if (mark_as_selected(row, sel)) {
       ui.set_font(DWIN_FONT_MENU);
       dwin_font.solid = false;
-      dwin_font.fg = Color_White;
+      dwin_font.fg = StdColor::White;
 
       const uint8_t vallen = (pgm ? utf8_strlen_P(data) : utf8_strlen(S(data)));
 
@@ -356,7 +356,7 @@ void MarlinUI::draw_status_message(const bool blink) {
       lcd_put_dwin_string();
 
       if (vallen) {
-        dwin_font.fg = Color_Yellow;
+        dwin_font.fg = StdColor::Yellow;
         dwin_string.set(data);
         lcd_moveto(LCD_WIDTH - vallen - 1, row);
         lcd_put_dwin_string();
@@ -379,7 +379,7 @@ void MarlinUI::draw_status_message(const bool blink) {
     // Assume the label is alpha-numeric (with a descender)
     const uint16_t row = (LCD_HEIGHT / 2) - 1;
 
-    dwin_font.fg = Color_White;
+    dwin_font.fg = StdColor::White;
     dwin_font.solid = true;
     lcd_moveto((LCD_WIDTH - labellen + !!vallen) / 2, row);
     lcd_put_dwin_string();
@@ -390,7 +390,7 @@ void MarlinUI::draw_status_message(const bool blink) {
       dwin_string.add(value);
 
       const dwin_coord_t by = (row * MENU_LINE_HEIGHT) + MENU_FONT_HEIGHT + EXTRA_ROW_HEIGHT / 2;
-      DWIN_Draw_String(true, Font::f16x32, Color_Yellow, Color_Bg_Black, (LCD_PIXEL_WIDTH - vallen * 16) / 2, by, S(dwin_string.string()));
+      DWIN_Draw_String(true, Font::f16x32, StdColor::Yellow, Color_Bg_Black, (LCD_PIXEL_WIDTH - vallen * 16) / 2, by, S(dwin_string.string()));
 
       extern screenFunc_t _manual_move_func_ptr;
       if (ui.currentScreen != _manual_move_func_ptr && !ui.external_control) {
@@ -426,7 +426,7 @@ void MarlinUI::draw_status_message(const bool blink) {
   ) {
     ui.set_font(DWIN_FONT_MENU);
     dwin_font.solid = false;
-    dwin_font.fg = Color_White;
+    dwin_font.fg = StdColor::White;
     ui.draw_select_screen_prompt(pref, string, suff);
     draw_boxed_string(false, no, !yesno);
     draw_boxed_string(true, yes,  yesno);
@@ -478,7 +478,7 @@ void MarlinUI::draw_status_message(const bool blink) {
       // Clear the Mesh Map
 
       // First draw the bigger box in White so we have a border around the mesh map box
-      DWIN_Draw_Rectangle(1, Color_White, x_offset - 2, y_offset - 2, x_offset + 2 + x_map_pixels, y_offset + 2 + y_map_pixels);
+      DWIN_Draw_Rectangle(1, StdColor::White, x_offset - 2, y_offset - 2, x_offset + 2 + x_map_pixels, y_offset + 2 + y_map_pixels);
       // Now actually clear the mesh map box
       DWIN_Draw_Rectangle(1, Color_Bg_Black, x_offset, y_offset, x_offset + x_map_pixels, y_offset + y_map_pixels);
 
@@ -498,12 +498,12 @@ void MarlinUI::draw_status_message(const bool blink) {
             dwin_coord_t  y = y_offset + pixels_per_y_mesh_pnt / 2;
       for (uint8_t j = 0; j < GRID_MAX_POINTS_Y; j++, y += pixels_per_y_mesh_pnt)
         for (uint8_t i = 0, x = sx; i < GRID_MAX_POINTS_X; i++, x += pixels_per_x_mesh_pnt)
-          DWIN_Draw_Point(Color_White, 1, 1, x, y);
+          DWIN_Draw_Point(StdColor::White, 1, 1, x, y);
 
       // Put Relevant Text on Display
 
       // Show X and Y positions at top of screen
-      dwin_font.fg = Color_White;
+      dwin_font.fg = StdColor::White;
       dwin_font.solid = true;
       const xy_pos_t pos = { ubl.mesh_index_to_xpos(x_plot), ubl.mesh_index_to_ypos(y_plot) },
                      lpos = pos.asLogical();

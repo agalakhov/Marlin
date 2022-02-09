@@ -111,10 +111,10 @@ void DWIN_UpdateLCD() {
 
 // Clear screen
 //  color: Clear screen color
-void DWIN_Frame_Clear(const uint16_t color) {
+void DWIN_Frame_Clear(Color  color) {
   size_t i = 0;
   DWIN_Byte(i, 0x01);
-  DWIN_Word(i, color);
+  DWIN_Word(i, color.bits());
   DWIN_Send(i);
 }
 
@@ -123,10 +123,10 @@ void DWIN_Frame_Clear(const uint16_t color) {
 //  width: point width   0x01-0x0F
 //  height: point height 0x01-0x0F
 //  x,y: upper left point
-void DWIN_Draw_Point(uint16_t color, uint8_t width, uint8_t height, uint16_t x, uint16_t y) {
+void DWIN_Draw_Point(Color color, uint8_t width, uint8_t height, uint16_t x, uint16_t y) {
   size_t i = 0;
   DWIN_Byte(i, 0x02);
-  DWIN_Word(i, color);
+  DWIN_Word(i, color.bits());
   DWIN_Byte(i, width);
   DWIN_Byte(i, height);
   DWIN_Word(i, x);
@@ -138,10 +138,10 @@ void DWIN_Draw_Point(uint16_t color, uint8_t width, uint8_t height, uint16_t x, 
 //  color: Line segment color
 //  xStart/yStart: Start point
 //  xEnd/yEnd: End point
-void DWIN_Draw_Line(uint16_t color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd) {
+void DWIN_Draw_Line(Color color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd) {
   size_t i = 0;
   DWIN_Byte(i, 0x03);
-  DWIN_Word(i, color);
+  DWIN_Word(i, color.bits());
   DWIN_Word(i, xStart);
   DWIN_Word(i, yStart);
   DWIN_Word(i, xEnd);
@@ -154,11 +154,11 @@ void DWIN_Draw_Line(uint16_t color, uint16_t xStart, uint16_t yStart, uint16_t x
 //  color: Rectangle color
 //  xStart/yStart: upper left point
 //  xEnd/yEnd: lower right point
-void DWIN_Draw_Rectangle(uint8_t mode, uint16_t color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd) {
+void DWIN_Draw_Rectangle(uint8_t mode, Color color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd) {
   size_t i = 0;
   DWIN_Byte(i, 0x05);
   DWIN_Byte(i, mode);
-  DWIN_Word(i, color);
+  DWIN_Word(i, color.bits());
   DWIN_Word(i, xStart);
   DWIN_Word(i, yStart);
   DWIN_Word(i, xEnd);
@@ -174,12 +174,12 @@ void DWIN_Draw_Rectangle(uint8_t mode, uint16_t color, uint16_t xStart, uint16_t
 //  xStart/yStart: upper left point
 //  xEnd/yEnd: bottom right point
 void DWIN_Frame_AreaMove(uint8_t mode, uint8_t dir, uint16_t dis,
-                         uint16_t color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd) {
+                         Color color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd) {
   size_t i = 0;
   DWIN_Byte(i, 0x09);
   DWIN_Byte(i, (mode << 7) | dir);
   DWIN_Word(i, dis);
-  DWIN_Word(i, color);
+  DWIN_Word(i, color.bits());
   DWIN_Word(i, xStart);
   DWIN_Word(i, yStart);
   DWIN_Word(i, xEnd);
@@ -198,7 +198,7 @@ void DWIN_Frame_AreaMove(uint8_t mode, uint8_t dir, uint16_t dis,
 //  x/y: Upper-left coordinate of the string
 //  *string: The string
 //  rlimit: To limit the drawn string length
-void DWIN_Draw_String(bool bShow, Font font, uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, const char * const string, uint16_t rlimit/*=0xFFFF*/) {
+void DWIN_Draw_String(bool bShow, Font font, Color color, Color bColor, uint16_t x, uint16_t y, const char * const string, uint16_t rlimit/*=0xFFFF*/) {
   constexpr uint8_t widthAdjust = 0;
   size_t i = 0;
   DWIN_Byte(i, 0x11);
@@ -207,8 +207,8 @@ void DWIN_Draw_String(bool bShow, Font font, uint16_t color, uint16_t bColor, ui
   // Bit 5-4: Unused (0)
   // Bit 3-0: size
   DWIN_Byte(i, (widthAdjust * 0x80) | (bShow * 0x40) | font.idx());
-  DWIN_Word(i, color);
-  DWIN_Word(i, bColor);
+  DWIN_Word(i, color.bits());
+  DWIN_Word(i, bColor.bits());
   DWIN_Word(i, x);
   DWIN_Word(i, y);
   DWIN_Text(i, string, rlimit);
@@ -225,8 +225,8 @@ void DWIN_Draw_String(bool bShow, Font font, uint16_t color, uint16_t bColor, ui
 //  iNum: Number of digits
 //  x/y: Upper-left coordinate
 //  value: Integer value
-void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font font, uint16_t color,
-                          uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, uint32_t value) {
+void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font font, Color color,
+                          Color bColor, uint8_t iNum, uint16_t x, uint16_t y, uint32_t value) {
   size_t i = 0;
   DWIN_Byte(i, 0x14);
   // Bit 7: bshow
@@ -235,8 +235,8 @@ void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font fon
   // Bit 4: zeroMode
   // Bit 3-0: size
   DWIN_Byte(i, (bShow * 0x80) | (zeroFill * 0x20) | (zeroMode * 0x10) | font.idx());
-  DWIN_Word(i, color);
-  DWIN_Word(i, bColor);
+  DWIN_Word(i, color.bits());
+  DWIN_Word(i, bColor.bits());
   DWIN_Byte(i, iNum);
   DWIN_Byte(i, 0); // fNum
   DWIN_Word(i, x);
@@ -271,14 +271,14 @@ void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font fon
 //  fNum: Number of decimal digits
 //  x/y: Upper-left point
 //  value: Float value
-void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font font, uint16_t color,
-                          uint16_t bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, int32_t value) {
+void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font font, Color color,
+                          Color bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, int32_t value) {
   //uint8_t *fvalue = (uint8_t*)&value;
   size_t i = 0;
   DWIN_Byte(i, 0x14);
   DWIN_Byte(i, (bShow * 0x80) | (zeroFill * 0x20) | (zeroMode * 0x10) | font.idx());
-  DWIN_Word(i, color);
-  DWIN_Word(i, bColor);
+  DWIN_Word(i, color.bits());
+  DWIN_Word(i, bColor.bits());
   DWIN_Byte(i, iNum);
   DWIN_Byte(i, fNum);
   DWIN_Word(i, x);
@@ -295,8 +295,8 @@ void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font f
 
 // Draw a floating point number
 //  value: positive unscaled float value
-void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t size, uint16_t color,
-                            uint16_t bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, float value) {
+void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t size, Color color,
+                            Color bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, float value) {
   const int32_t val = round(value * POW(10, fNum));
   DWIN_Draw_FloatValue(bShow, zeroFill, zeroMode, size, color, bColor, iNum, fNum, x, y, val);
 }
