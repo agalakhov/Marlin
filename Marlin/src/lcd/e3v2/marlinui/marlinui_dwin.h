@@ -35,7 +35,7 @@ typedef int16_t lcd_int_t;
 typedef struct {
   Font index;
   uint8_t width, height;
-  uint16_t fg, bg;
+  Color fg, bg;
   bool solid;
 } dwin_font_t;
 

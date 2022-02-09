@@ -24,6 +24,7 @@
 #include "../../../inc/MarlinConfig.h"
 
 #include "dwin_font.h"
+#include "dwin_color.h"
 
 #if ENABLED(DWIN_MARLINUI_LANDSCAPE)
   #define DWIN_WIDTH  480
@@ -107,26 +108,26 @@ void DWIN_UpdateLCD();
 
 // Clear screen
 //  color: Clear screen color
-void DWIN_Frame_Clear(const uint16_t color);
+void DWIN_Frame_Clear(Color color);
 
 // Draw a point
 //  color: point color
 //  width: point width   0x01-0x0F
 //  height: point height 0x01-0x0F
 //  x,y: upper left point
-void DWIN_Draw_Point(uint16_t color, uint8_t width, uint8_t height, uint16_t x, uint16_t y);
+void DWIN_Draw_Point(Color color, uint8_t width, uint8_t height, uint16_t x, uint16_t y);
 
 // Draw a line
 //  color: Line segment color
 //  xStart/yStart: Start point
 //  xEnd/yEnd: End point
-void DWIN_Draw_Line(uint16_t color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
+void DWIN_Draw_Line(Color color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
 
 // Draw a Horizontal line
 //  color: Line segment color
 //  xStart/yStart: Start point
 //  xLength: Line Length
-inline void DWIN_Draw_HLine(uint16_t color, uint16_t xStart, uint16_t yStart, uint16_t xLength) {
+inline void DWIN_Draw_HLine(Color color, uint16_t xStart, uint16_t yStart, uint16_t xLength) {
   DWIN_Draw_Line(color, xStart, yStart, xStart + xLength - 1, yStart);
 }
 
@@ -134,7 +135,7 @@ inline void DWIN_Draw_HLine(uint16_t color, uint16_t xStart, uint16_t yStart, ui
 //  color: Line segment color
 //  xStart/yStart: Start point
 //  yLength: Line Length
-inline void DWIN_Draw_VLine(uint16_t color, uint16_t xStart, uint16_t yStart, uint16_t yLength) {
+inline void DWIN_Draw_VLine(Color color, uint16_t xStart, uint16_t yStart, uint16_t yLength) {
   DWIN_Draw_Line(color, xStart, yStart, xStart, yStart + yLength - 1);
 }
 
@@ -143,14 +144,14 @@ inline void DWIN_Draw_VLine(uint16_t color, uint16_t xStart, uint16_t yStart, ui
 //  color: Rectangle color
 //  xStart/yStart: upper left point
 //  xEnd/yEnd: lower right point
-void DWIN_Draw_Rectangle(uint8_t mode, uint16_t color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
+void DWIN_Draw_Rectangle(uint8_t mode, Color color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
 
 // Draw a box
 //  mode: 0=frame, 1=fill, 2=XOR fill
 //  color: Rectangle color
 //  xStart/yStart: upper left point
 //  xSize/ySize: box size
-inline void DWIN_Draw_Box(uint8_t mode, uint16_t color, uint16_t xStart, uint16_t yStart, uint16_t xSize, uint16_t ySize) {
+inline void DWIN_Draw_Box(uint8_t mode, Color color, uint16_t xStart, uint16_t yStart, uint16_t xSize, uint16_t ySize) {
   DWIN_Draw_Rectangle(mode, color, xStart, yStart, xStart + xSize - 1, yStart + ySize - 1);
 }
 
@@ -162,7 +163,7 @@ inline void DWIN_Draw_Box(uint8_t mode, uint16_t color, uint16_t xStart, uint16_
 //  xStart/yStart: upper left point
 //  xEnd/yEnd: bottom right point
 void DWIN_Frame_AreaMove(uint8_t mode, uint8_t dir, uint16_t dis,
-                         uint16_t color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
+                         Color color, uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd);
 
 
 /*---------------------------------------- Text related functions ----------------------------------------*/
@@ -175,9 +176,9 @@ void DWIN_Frame_AreaMove(uint8_t mode, uint8_t dir, uint16_t dis,
 //  x/y: Upper-left coordinate of the string
 //  *string: The string
 //  rlimit: For draw less chars than string length use rlimit
-void DWIN_Draw_String(bool bShow, Font font, uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, const char * const string, uint16_t rlimit=0xFFFF);
+void DWIN_Draw_String(bool bShow, Font font, Color color, Color bColor, uint16_t x, uint16_t y, const char * const string, uint16_t rlimit=0xFFFF);
 
-inline void DWIN_Draw_String(bool bShow, Font font, uint16_t color, uint16_t bColor, uint16_t x, uint16_t y, FSTR_P const ftitle) {
+inline void DWIN_Draw_String(bool bShow, Font font, Color color, Color bColor, uint16_t x, uint16_t y, FSTR_P const ftitle) {
   char ctitle[strlen_P(FTOP(ftitle)) + 1];
   strcpy_P(ctitle, FTOP(ftitle));
   DWIN_Draw_String(bShow, font, color, bColor, x, y, ctitle);
@@ -193,8 +194,8 @@ inline void DWIN_Draw_String(bool bShow, Font font, uint16_t color, uint16_t bCo
 //  iNum: Number of digits
 //  x/y: Upper-left coordinate
 //  value: Integer value
-void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font font, uint16_t color,
-                          uint16_t bColor, uint8_t iNum, uint16_t x, uint16_t y, uint32_t value);
+void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font font, Color color,
+                          Color bColor, uint8_t iNum, uint16_t x, uint16_t y, uint32_t value);
 
 // Draw a floating point number
 //  bShow: true=display background color; false=don't display background color
@@ -207,13 +208,13 @@ void DWIN_Draw_IntValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font fon
 //  fNum: Number of decimal digits
 //  x/y: Upper-left point
 //  value: Float value
-void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font font, uint16_t color,
-                            uint16_t bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, int32_t value);
+void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, Font font, Color color,
+                            Color bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, int32_t value);
 
 // Draw a floating point number
 //  value: positive unscaled float value
-void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t size, uint16_t color,
-                            uint16_t bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, float value);
+void DWIN_Draw_FloatValue(uint8_t bShow, bool zeroFill, uint8_t zeroMode, uint8_t size, Color color,
+                            Color bColor, uint8_t iNum, uint8_t fNum, uint16_t x, uint16_t y, float value);
 
 /*---------------------------------------- Picture related functions ----------------------------------------*/
 

@@ -27,18 +27,41 @@
 #define GetGColor(color) ((color >>  5) & 0x3F)
 #define GetBColor(color) ((color >>  0) & 0x1F)
 
-#define Color_White         0xFFFF
-#define Color_Yellow        RGB(0x1F,0x3F,0x00)
-#define Color_Red           RGB(0x1F,0x00,0x00)
-#define Color_Error_Red     0xB000  // Error!
-#define Color_Bg_Red        0xF00F  // Red background color
-#define Color_Bg_Window     0x31E8  // Popup background color
-#define Color_Bg_Blue       0x1125  // Dark blue background color
-#define Color_Bg_Black      0x0841  // Black background color
-#define Color_IconBlue      0x45FA  // Lighter blue that matches icons/accents
-#define Popup_Text_Color    0xD6BA  // Popup font background color
-#define Line_Color          0x3A6A  // Split line color
-#define Rectangle_Color     0xEE2F  // Blue square cursor color
-#define Percent_Color       0xFE29  // Percentage color
-#define BarFill_Color       0x10E4  // Fill color of progress bar
-#define Select_Color        0x33BB  // Selected color
+class Color {
+  public:
+    // red, blue: 0..31 (0x1f); green: 0..63 (0x3f)
+    inline constexpr Color(uint8_t red, uint8_t green, uint8_t blue)
+      : value(((red & 0x1f) << 11) | ((green & 0x3f) << 5) | (blue & 0x1f))
+    { }
+    inline constexpr uint8_t red() const {
+      return (value >> 11) & 0x1f;
+    }
+    inline constexpr uint8_t green() const {
+      return (value >> 5) & 0x3f;
+    }
+    inline constexpr uint8_t blue() const {
+      return (value >> 0) & 0x1f;
+    }
+    inline constexpr uint16_t bits() const { return value; }
+  private:
+    uint16_t value;
+};
+
+struct StdColor {
+  inline static const constexpr Color White  = { 0x1f, 0x3f, 0x1f };
+  inline static const constexpr Color Yellow = { 0x1f, 0x3f, 0x00 };
+  inline static const constexpr Color Red    = { 0x1f, 0x00, 0x00 };
+};
+
+static const constexpr Color Color_Error_Red = { 0x16, 0x00, 0x00 }; // Error!
+static const constexpr Color Color_Bg_Red = { 0x1e, 0x00, 0x0f }; // Red background color
+static const constexpr Color Color_Bg_Window = { 0x06, 0x0f, 0x08 }; // Popup background color
+static const constexpr Color Color_Bg_Blue = { 0x02, 0x09, 0x05 }; // Dark blue background color
+static const constexpr Color Color_Bg_Black = { 0x01, 0x02, 0x01 }; // Black background color
+static const constexpr Color Color_IconBlue = { 0x08, 0x2f, 0x1a }; // Lighter blue that matches icons/accents
+static const constexpr Color Popup_Text_Color = { 0x1a, 0x35, 0x1a }; // Popup font background color
+static const constexpr Color Line_Color = { 0x07, 0x13, 0x0a }; // Split line color
+static const constexpr Color Rectangle_Color = { 0x1d, 0x31, 0x0f }; // Blue square cursor color
+static const constexpr Color Percent_Color = { 0x1f, 0x31, 0x09 }; // Percentage color
+static const constexpr Color BarFill_Color = { 0x02, 0x07, 0x04 }; // Fill color of progress bar
+static const constexpr Color Select_Color = { 0x06, 0x1d, 0x1b }; // Selected color
